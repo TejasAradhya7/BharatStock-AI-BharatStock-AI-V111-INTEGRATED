@@ -1,0 +1,999 @@
+"""Leakage-aware helpers for intraday candles, news features and model research.
+
+No synthetic market prices are generated here. Live candle retrieval requires an
+explicit Upstox instrument key and a configured UPSTOX_ACCESS_TOKEN.
+"""
+from __future__ import annotations
+import os
+from datetime import datetime, timezone
+from urllib.parse import quote
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, balanced_accuracy_score, brier_score_loss, log_loss, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.model_selection import TimeSeriesSplit
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+
+def parse_iso_datetime(value: str) -> datetime:
+    try:
+        result = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Use an ISO-8601 timestamp including timezone, e.g. 2026-10-30T10:05:00+05:30.") from exc
+    if result.tzinfo is None or result.utcoffset() is None:
+        raise ValueError("Timestamp must include a timezone offset; naive timestamps are rejected.")
+    return result.astimezone(timezone.utc)
+
+
+def score_headline(text: str) -> float:
+    """Transparent baseline sentiment; replaceable by a versioned finance NLP model."""
+    positive = {"beat", "beats", "growth", "profit", "surge", "surges", "upgrade", "strong", "record", "approval", "approved", "gain", "gains", "rally", "rises", "rise", "positive", "buyback", "dividend"}
+    negative = {"miss", "misses", "loss", "losses", "fraud", "probe", "downgrade", "weak", "fall", "falls", "drop", "drops", "decline", "declines", "negative", "default", "cuts", "cut", "crash", "warning"}
+    import re
+    words = re.findall(r"[a-z]+", (text or "").lower())
+    if not words:
+        return 0.0
+    raw = sum(w in positive for w in words) - sum(w in negative for w in words)
+    return float(max(-1.0, min(1.0, raw / max(3.0, len(words) ** 0.5))))
+
+
+def build_intraday_features(candles: pd.DataFrame) -> pd.DataFrame:
+    """Create causal features and future-direction labels from sorted OHLCV candles.
+
+    Each row's features only use current/past candles, including exchange-local
+    time cycles, momentum, volatility and trend context. The target is the next
+    3 bars (15 minutes if bars are 5-minute candles); callers evaluate chronologically.
+    """
+    required = {"timestamp", "open", "high", "low", "close", "volume"}
+    if not required.issubset(candles.columns):
+        raise ValueError(f"Candles require columns: {', '.join(sorted(required))}.")
+    frame = candles.copy()
+    frame["timestamp"] = pd.to_datetime(frame["timestamp"], utc=True, errors="coerce")
+    for col in ("open", "high", "low", "close", "volume"):
+        frame[col] = pd.to_numeric(frame[col], errors="coerce")
+    frame = frame.dropna(subset=list(required)).sort_values("timestamp").drop_duplicates("timestamp", keep="last")
+    frame = frame[(frame[["open", "high", "low", "close"]] > 0).all(axis=1)]
+    if len(frame) < 40:
+        raise ValueError("At least 40 valid intraday candles are required; no sample candles are substituted.")
+    close = frame["close"]
+    ret = close.pct_change()
+    frame["ret_1"] = ret
+    frame["ret_2"] = close.pct_change(2)
+    frame["ret_3"] = close.pct_change(3)
+    frame["ret_6"] = close.pct_change(6)
+    frame["ret_12"] = close.pct_change(12)
+    frame["ret_24"] = close.pct_change(24)
+    frame["momentum_acceleration"] = frame["ret_6"] - frame["ret_12"]
+    frame["volatility_12"] = ret.rolling(12, min_periods=12).std()
+    frame["volatility_24"] = ret.rolling(24, min_periods=24).std()
+    frame["sma_gap_5"] = close / close.rolling(5, min_periods=5).mean() - 1
+    frame["sma_gap_20"] = close / close.rolling(20, min_periods=20).mean() - 1
+    frame["sma_gap_50"] = close / close.rolling(50, min_periods=20).mean() - 1
+    ema_8 = close.ewm(span=8, adjust=False, min_periods=8).mean()
+    ema_21 = close.ewm(span=21, adjust=False, min_periods=21).mean()
+    ema_50 = close.ewm(span=50, adjust=False, min_periods=20).mean()
+    frame["ema_gap_8"] = close / ema_8 - 1
+    frame["ema_gap_21"] = close / ema_21 - 1
+    frame["ema_gap_50"] = close / ema_50 - 1
+    # Session/time features are derived from the candle timestamp only.
+    # Upstox timestamps are normalized to UTC, then converted to exchange time.
+    local_ts = frame["timestamp"].dt.tz_convert("Asia/Kolkata")
+    minute_of_day = local_ts.dt.hour * 60 + local_ts.dt.minute
+    frame["time_of_day_sin"] = np.sin(2.0 * np.pi * minute_of_day / 1440.0)
+    frame["time_of_day_cos"] = np.cos(2.0 * np.pi * minute_of_day / 1440.0)
+    weekday = local_ts.dt.dayofweek
+    frame["weekday_sin"] = np.sin(2.0 * np.pi * weekday / 7.0)
+    frame["weekday_cos"] = np.cos(2.0 * np.pi * weekday / 7.0)
+    frame["gap_pct"] = frame["open"] / close.shift(1) - 1.0
+    frame["range_pct"] = (frame["high"] - frame["low"]) / close
+    frame["body_pct"] = (frame["close"] - frame["open"]) / close
+    candle_range = (frame["high"] - frame["low"]).replace(0, np.nan)
+    frame["close_location"] = ((frame["close"] - frame["low"]) / candle_range).clip(0, 1)
+    frame["volume_ratio"] = frame["volume"] / frame["volume"].rolling(20, min_periods=5).mean().replace(0, np.nan)
+    # Neutral defaults preserve a valid benchmark when no point-in-time news exists.
+    for column in ("news_event_count_24h", "news_sentiment_24h", "news_relevance_24h"):
+        if column not in frame.columns:
+            frame[column] = 0.0
+    # Predict after close[t], enter at close[t+1], and exit three bars later at close[t+4].
+    # This makes the supervised target executable without assuming a fill at the signal close.
+    frame["target_return_3"] = close.shift(-4) / close.shift(-1) - 1
+    frame["Target"] = (frame["target_return_3"] > 0).astype("int64")
+    # Final four rows have no executable entry/exit pair and must not be scored.
+    return frame.replace([np.inf, -np.inf], np.nan)
+
+
+def align_news_features(candles: pd.DataFrame, events: list[dict]) -> pd.DataFrame:
+    """Add strictly point-in-time news features to candle timestamps.
+
+    An event contributes only at/after available_at (not merely published_at),
+    so newly ingested/backfilled news cannot leak into earlier candles.
+    """
+    if "timestamp" not in candles.columns:
+        raise ValueError("Candles require timestamp for point-in-time news alignment.")
+    out = candles.copy()
+    candle_times = pd.to_datetime(out["timestamp"], utc=True, errors="coerce")
+    normalized = []
+    for event in events:
+        try:
+            available = pd.to_datetime(event.get("available_at"), utc=True, errors="raise")
+            sentiment = float(event.get("sentiment_score", 0.0))
+            relevance = float(event.get("relevance_score", 0.5))
+            if pd.isna(available) or not np.isfinite(sentiment) or not np.isfinite(relevance):
+                continue
+            normalized.append((available, max(-1.0, min(1.0, sentiment)), max(0.0, min(1.0, relevance))))
+        except (TypeError, ValueError, OverflowError):
+            continue
+    normalized.sort(key=lambda item: item[0])
+    counts, sentiments, relevance = [], [], []
+    cursor = 0
+    eligible = []
+    for timestamp in candle_times:
+        while cursor < len(normalized) and normalized[cursor][0] <= timestamp:
+            eligible.append(normalized[cursor]); cursor += 1
+        # Only events from the preceding 24 hours are used; all must already be available.
+        recent = [item for item in eligible if item[0] >= timestamp - pd.Timedelta(hours=24)] if not pd.isna(timestamp) else []
+        counts.append(float(len(recent)))
+        weights = [item[2] for item in recent]
+        sentiments.append(float(np.average([item[1] for item in recent], weights=weights)) if recent and sum(weights) > 0 else 0.0)
+        relevance.append(float(np.mean(weights)) if weights else 0.0)
+    out["news_event_count_24h"] = counts
+    out["news_sentiment_24h"] = sentiments
+    out["news_relevance_24h"] = relevance
+    return out
+
+
+def _expected_calibration_error(y_true, probabilities, bins: int = 10) -> float | None:
+    """Compute ECE on a held-out chronological fold; lower is better."""
+    y = np.asarray(y_true, dtype=int)
+    p = np.asarray(probabilities, dtype=float)
+    if len(y) == 0 or len(y) != len(p) or not np.isfinite(p).all():
+        return None
+    edges = np.linspace(0.0, 1.0, bins + 1)
+    error = 0.0
+    for i in range(bins):
+        mask = (p >= edges[i]) & ((p < edges[i + 1]) if i < bins - 1 else (p <= edges[i + 1]))
+        if mask.any():
+            error += float(mask.mean()) * abs(float(y[mask].mean()) - float(p[mask].mean()))
+    return float(error)
+
+
+def _non_overlapping_long_flat_backtest(
+    test: pd.DataFrame,
+    probabilities,
+    cost_bps: float = 10.0,
+    threshold: float = 0.60,
+    horizon_bars: int = 3,
+) -> dict:
+    """Evaluate a long-or-flat strategy using chronological candle data.
+
+    Signal at candle t:
+      - Entry: close[t + 1]
+      - Exit: close[t + horizon_bars + 1]
+
+    Only every horizon_bars-th signal is considered, so candidate holding
+    windows do not overlap. The final candidates without a complete exit
+    are excluded.
+
+    cost_bps is the estimated transaction cost per side in basis points.
+    The strategy pays twice this amount per completed trade.
+
+    This is a research backtest, not a guarantee of future performance.
+    """
+    # Validate parameters before performing calculations.
+    if (
+        isinstance(horizon_bars, (bool, np.bool_))
+        or not isinstance(horizon_bars, (int, np.integer))
+        or horizon_bars < 1
+    ):
+        raise ValueError("horizon_bars must be a positive integer")
+
+    try:
+        cost_bps = float(cost_bps)
+        threshold = float(threshold)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(
+            "cost_bps and threshold must be numeric"
+        ) from exc
+
+    if not np.isfinite(cost_bps) or cost_bps < 0:
+        raise ValueError("cost_bps must be finite and non-negative")
+
+    if not np.isfinite(threshold) or not 0.0 <= threshold <= 1.0:
+        raise ValueError(
+            "threshold must be finite and between 0 and 1"
+        )
+
+    if not isinstance(test, pd.DataFrame):
+        raise TypeError("test must be a pandas DataFrame")
+
+    if "close" not in test.columns:
+        raise ValueError("test rows must include close prices")
+
+    frame = test.reset_index(drop=True)
+    close = pd.to_numeric(
+        frame["close"], errors="coerce"
+    ).to_numpy(dtype=float)
+
+    probs = np.asarray(probabilities, dtype=float).reshape(-1)
+
+    if len(probs) != len(frame):
+        raise ValueError(
+            "probabilities length must match test rows"
+        )
+
+    n = len(frame)
+
+    # Need a signal candle, a next-close entry, and a full holding period.
+    if n <= horizon_bars + 1:
+        return {
+            "net_return_pct": None,
+            "gross_benchmark_return_pct": None,
+            "max_drawdown": None,
+            "trades": 0,
+            "non_overlapping_candidates": 0,
+            "signal_threshold": threshold,
+            "round_trip_cost_bps": 2.0 * cost_bps,
+            "backtest_method": (
+                "next-close entry; non-overlapping fixed hold; "
+                "compounded; matched windows"
+            ),
+            "status": "insufficient_data",
+        }
+
+    signal_idx = np.arange(n)
+    entry_idx = signal_idx + 1
+    exit_idx = signal_idx + horizon_bars + 1
+
+    # Candidate signals are separated by the holding horizon.
+    valid = (signal_idx % horizon_bars) == 0
+    valid &= exit_idx < n
+    valid &= np.isfinite(probs)
+    valid &= (probs >= 0.0) & (probs <= 1.0)
+
+    # Entry and exit prices must both be valid and strictly positive.
+    safe_entry_idx = np.minimum(entry_idx, n - 1)
+    safe_exit_idx = np.minimum(exit_idx, n - 1)
+
+    valid &= np.isfinite(close[safe_entry_idx])
+    valid &= np.isfinite(close[safe_exit_idx])
+    valid &= close[safe_entry_idx] > 0.0
+    valid &= close[safe_exit_idx] > 0.0
+
+    positions = np.flatnonzero(valid)
+
+    if len(positions) == 0:
+        return {
+            "net_return_pct": None,
+            "gross_benchmark_return_pct": None,
+            "max_drawdown": None,
+            "trades": 0,
+            "non_overlapping_candidates": 0,
+            "signal_threshold": threshold,
+            "round_trip_cost_bps": 2.0 * cost_bps,
+            "backtest_method": (
+                "next-close entry; non-overlapping fixed hold; "
+                "compounded; matched windows"
+            ),
+            "status": "no_valid_candidates",
+        }
+
+    entries = close[positions + 1]
+    exits = close[positions + horizon_bars + 1]
+    candidate_probs = probs[positions]
+
+    # Defensive validation of all selected prices.
+    good = (
+        np.isfinite(entries)
+        & np.isfinite(exits)
+        & (entries > 0.0)
+        & (exits > 0.0)
+    )
+
+    entries = entries[good]
+    exits = exits[good]
+    candidate_probs = candidate_probs[good]
+
+    if len(entries) == 0:
+        return {
+            "net_return_pct": None,
+            "gross_benchmark_return_pct": None,
+            "max_drawdown": None,
+            "trades": 0,
+            "non_overlapping_candidates": 0,
+            "signal_threshold": threshold,
+            "round_trip_cost_bps": 2.0 * cost_bps,
+            "backtest_method": (
+                "next-close entry; non-overlapping fixed hold; "
+                "compounded; matched windows"
+            ),
+            "status": "no_valid_candidates",
+        }
+
+    # Simple long-only returns for each completed holding window.
+    returns = exits / entries - 1.0
+
+    # Only take positions when the predicted probability reaches threshold.
+    active = candidate_probs >= threshold
+
+    # Convert round-trip basis-point costs to a decimal return.
+    round_trip_cost = 2.0 * cost_bps / 10000.0
+
+    net_returns = np.where(
+        active,
+        returns - round_trip_cost,
+        0.0,
+    )
+
+    # Reject invalid equity paths instead of reporting misleading metrics.
+    if (
+        not np.isfinite(net_returns).all()
+        or not np.isfinite(returns).all()
+        or np.any(1.0 + net_returns <= 0.0)
+        or np.any(1.0 + returns <= 0.0)
+    ):
+        raise ValueError(
+            "Backtest produced invalid returns or non-positive equity"
+        )
+
+    # Compound the strategy and matched-window benchmark separately.
+    strategy_equity = np.concatenate(
+        ([1.0], np.cumprod(1.0 + net_returns))
+    )
+    benchmark_equity = np.concatenate(
+        ([1.0], np.cumprod(1.0 + returns))
+    )
+
+    running_peaks = np.maximum.accumulate(strategy_equity)
+    drawdown = strategy_equity / running_peaks - 1.0
+
+    return {
+        "status": "ok",
+        "net_return_pct": float(
+            (strategy_equity[-1] - 1.0) * 100.0
+        ),
+        "gross_benchmark_return_pct": float(
+            (benchmark_equity[-1] - 1.0) * 100.0
+        ),
+        "max_drawdown": float(drawdown.min()),
+        "trades": int(active.sum()),
+        "non_overlapping_candidates": int(len(entries)),
+        "signal_threshold": threshold,
+        "round_trip_cost_bps": float(2.0 * cost_bps),
+        "backtest_method": (
+            "next-close entry; non-overlapping fixed hold; "
+            "compounded; matched buy-and-hold windows"
+        ),
+    }
+
+
+def _select_threshold_from_validation(
+    validation: pd.DataFrame,
+    probabilities,
+    cost_bps: float = 10.0,
+    horizon_bars: int = 3,
+    min_trades: int = 5,
+) -> dict:
+    """Select a threshold on an earlier validation segment only.
+
+    This helper does not inspect the final test fold. If no threshold
+    achieves the minimum trade count, it returns a fail-closed result.
+    """
+    if not isinstance(validation, pd.DataFrame):
+        raise TypeError("validation must be a pandas DataFrame")
+    if isinstance(min_trades, bool) or not isinstance(min_trades, int) or min_trades < 1:
+        raise ValueError("min_trades must be a positive integer")
+
+    probs = np.asarray(probabilities, dtype=float).reshape(-1)
+    if len(probs) != len(validation):
+        raise ValueError("probabilities length must match validation rows")
+    if not np.isfinite(probs).all() or np.any((probs < 0) | (probs > 1)):
+        raise ValueError("probabilities must be finite values between 0 and 1")
+
+    # Fixed candidate grid, chosen before looking at outcomes.
+    candidates = (0.50, 0.525, 0.55, 0.575, 0.60, 0.625, 0.65, 0.675, 0.70)
+    eligible = []
+
+    for threshold in candidates:
+        result = _non_overlapping_long_flat_backtest(
+            validation,
+            probs,
+            cost_bps=cost_bps,
+            threshold=threshold,
+            horizon_bars=horizon_bars,
+        )
+        trades = int(result.get("trades", 0))
+        net_return = result.get("net_return_pct")
+
+        if (
+            trades >= min_trades
+            and result.get("status") == "ok"
+            and net_return is not None
+            and np.isfinite(float(net_return))
+        ):
+            eligible.append({
+                "threshold": threshold,
+                "trades": trades,
+                "net_return_pct": float(net_return),
+            })
+
+    if not eligible:
+        return {
+            "status": "no_eligible_threshold",
+            "selected_threshold": None,
+            "min_trades_required": min_trades,
+            "candidate_thresholds": list(candidates),
+            "selection_data": "validation_only",
+        }
+
+    # Fail closed: a threshold that merely meets the trade-count rule but
+    # loses money after assumed costs is not a usable research threshold.
+    profitable = [item for item in eligible if item["net_return_pct"] > 0.0]
+    if not profitable:
+        return {
+            "status": "no_profitable_threshold",
+            "selected_threshold": None,
+            "min_trades_required": min_trades,
+            "candidate_thresholds": list(candidates),
+            "selection_data": "validation_only",
+        }
+
+    # Maximize validation return only; break ties toward the higher threshold.
+    best = max(
+        profitable,
+        key=lambda item: (item["net_return_pct"], item["threshold"]),
+    )
+    return {
+        "status": "selected_on_validation",
+        "selected_threshold": float(best["threshold"]),
+        "validation_trades": int(best["trades"]),
+        "validation_net_return_pct": float(best["net_return_pct"]),
+        "min_trades_required": min_trades,
+        "candidate_thresholds": list(candidates),
+        "selection_data": "validation_only",
+    }
+
+
+
+def _select_classification_threshold(validation_targets, validation_probabilities) -> dict:
+    """Choose a binary decision threshold using validation data only.
+
+    The objective is balanced accuracy, so the decision rule does not simply
+    reward predicting the majority class. The final test fold is never read.
+    If validation lacks either class, retain the conventional 0.50 threshold.
+    """
+    y = np.asarray(validation_targets, dtype=int).reshape(-1)
+    probs = np.asarray(validation_probabilities, dtype=float).reshape(-1)
+    if len(y) != len(probs):
+        raise ValueError("validation targets and probabilities length must match")
+    if len(y) == 0 or not np.isin(y, [0, 1]).all():
+        raise ValueError("validation targets must be non-empty binary values")
+    if not np.isfinite(probs).all() or np.any((probs < 0) | (probs > 1)):
+        raise ValueError("validation probabilities must be finite values between 0 and 1")
+    if np.unique(y).size < 2:
+        return {"status": "single_class_validation_default", "selected_threshold": 0.50, "validation_balanced_accuracy": None, "selection_data": "validation_only"}
+
+    candidates = np.round(np.arange(0.25, 0.751, 0.025), 3)
+    scored = []
+    for threshold in candidates:
+        pred = (probs >= threshold).astype(int)
+        scored.append((float(balanced_accuracy_score(y, pred)), -abs(float(threshold) - 0.50), float(threshold)))
+    best = max(scored)
+    return {
+        "status": "selected_on_validation",
+        "selected_threshold": best[2],
+        "validation_balanced_accuracy": best[0],
+        "candidate_thresholds": candidates.tolist(),
+        "selection_data": "validation_only",
+        "objective": "maximum balanced accuracy; ties prefer threshold nearest 0.50",
+    }
+
+
+def walk_forward_intraday(features: pd.DataFrame, folds: int = 3, cost_bps: float = 10.0) -> dict:
+    """Chronological research benchmark with leakage-aware classification and trading metrics.
+
+    cost_bps is an assumed cost per side in basis points; round-trip deduction is 2*cost_bps.
+    Each fold backtest uses non-overlapping 3-bar holds, enters at the next close, compounds
+    equity, and compares with buy-and-hold over the same windows. Costs remain a proxy.
+    Sequence models are trained only when PyTorch is installed and sufficient data exists.
+    """
+    columns = ["ret_1", "ret_2", "ret_3", "ret_6", "ret_12", "ret_24",
+               "momentum_acceleration", "volatility_12", "volatility_24",
+               "sma_gap_5", "sma_gap_20", "sma_gap_50",
+               "ema_gap_8", "ema_gap_21", "ema_gap_50",
+               "time_of_day_sin", "time_of_day_cos", "weekday_sin", "weekday_cos",
+               "gap_pct", "range_pct", "body_pct", "close_location",
+               "volume_ratio", "news_event_count_24h", "news_sentiment_24h", "news_relevance_24h"]
+    # Some index instruments legitimately report zero volume for every candle.
+    # In that case volume_ratio is entirely unavailable; omit only that feature
+    # rather than discarding the complete real-price dataset. Never synthesize it.
+    if "volume_ratio" in features.columns:
+        volume_values = pd.to_numeric(features["volume_ratio"], errors="coerce")
+        if not np.isfinite(volume_values.to_numpy(dtype=float)).any():
+            columns.remove("volume_ratio")
+    missing = set(columns + ["Target", "target_return_3", "timestamp"]) - set(features.columns)
+    if missing:
+        return {"status": "insufficient_data", "observations": 0, "folds": [], "model_comparison": [], "note": f"Required feature columns are missing: {sorted(missing)}"}
+    clean = features.dropna(subset=columns + ["Target", "target_return_3", "timestamp"]).copy().sort_values("timestamp").reset_index(drop=True)
+    folds = max(2, min(int(folds), 5))
+    n = len(clean); initial = max(40, int(n * .5)); remaining = n - initial
+    if remaining < folds * 5 or initial < 40:
+        return {"status": "insufficient_data", "observations": n, "folds": [], "model_comparison": [], "note": "Collect more real intraday candles; no synthetic data is used."}
+    sizes = np.full(folds, remaining // folds, dtype=int); sizes[:remaining % folds] += 1
+    factories = {
+        "Random Forest baseline": lambda: RandomForestClassifier(n_estimators=240, max_depth=6, min_samples_leaf=8, class_weight=None, random_state=42, n_jobs=-1),
+        "HistGradientBoosting": lambda: HistGradientBoostingClassifier(max_iter=100, learning_rate=.05, max_leaf_nodes=15, l2_regularization=1.0, random_state=43),
+        "Logistic Regression": lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, class_weight=None, C=0.5, random_state=44)),
+    }
+    scores = {name: [] for name in factories}
+    baseline_scores = {"Majority-class baseline": [], "Constant-probability baseline": []}
+    folds_out=[]; cursor=initial
+    sequence_scores = {"LSTM": [], "GRU": []}
+    try:
+        import torch
+        from torch import nn
+        torch.set_num_threads(max(1, min(2, os.cpu_count() or 1)))
+        torch_available = True
+    except ImportError:
+        torch_available = False
+    for fold_no, size in enumerate(sizes, 1):
+        # Target exits at t+4 (entry t+1, then 3 bars held), so purge four rows at boundary.
+        train, test = clean.iloc[:max(0, cursor - 4)].copy(), clean.iloc[cursor:cursor+int(size)].copy()
+        cursor += int(size)
+        if test.empty or train.empty:
+            continue
+        y_train=train["Target"].astype(int); y_test=test["Target"].astype(int)
+        fold_result={"fold":fold_no,"train_observations":len(train),"test_observations":len(test),"test_start":test["timestamp"].iloc[0].isoformat(),"test_end":test["timestamp"].iloc[-1].isoformat()}
+        # Reference baselines are estimated from the training segment only.
+        # They make class imbalance and probability skill visible per fold.
+        train_prevalence = float(y_train.mean())
+        majority_class = int(train_prevalence >= 0.5)
+        majority_pred = np.full(len(test), majority_class, dtype=int)
+        constant_probs = np.full(len(test), np.clip(train_prevalence, 1e-6, 1.0 - 1e-6), dtype=float)
+        majority_probs = np.full(
+            len(test),
+            1.0 - 1e-6 if majority_class == 1 else 1e-6,
+            dtype=float,
+        )
+        baseline_specs = (
+            ("Majority-class baseline", majority_pred, majority_probs),
+            ("Constant-probability baseline", (constant_probs >= 0.5).astype(int), constant_probs),
+        )
+        for baseline_name, baseline_pred, baseline_probs in baseline_specs:
+            baseline_metrics = {
+                "accuracy": float(accuracy_score(y_test, baseline_pred)),
+                "balanced_accuracy": float(balanced_accuracy_score(y_test, baseline_pred)) if y_test.nunique() > 1 else None,
+                "precision": float(precision_score(y_test, baseline_pred, zero_division=0)),
+                "recall": float(recall_score(y_test, baseline_pred, zero_division=0)),
+                "f1": float(f1_score(y_test, baseline_pred, zero_division=0)),
+                "roc_auc": None,
+                "brier_score": float(brier_score_loss(y_test, baseline_probs)),
+                "log_loss": float(log_loss(y_test, baseline_probs, labels=[0, 1])),
+                "expected_calibration_error": _expected_calibration_error(y_test, baseline_probs),
+                "training_positive_rate": train_prevalence,
+                "test_positive_rate": float(y_test.mean()),
+                "prediction_positive_rate": float(np.mean(baseline_pred)),
+                "prediction_class": majority_class,
+                **_non_overlapping_long_flat_backtest(test, baseline_probs, cost_bps=cost_bps, threshold=1.0, horizon_bars=3),
+            }
+            baseline_scores[baseline_name].append(baseline_metrics)
+            fold_result[baseline_name] = baseline_metrics
+        fold_result["class_diagnostics"] = {
+            "train_positive_rate": train_prevalence,
+            "test_positive_rate": float(y_test.mean()),
+            "test_negative_count": int((y_test == 0).sum()),
+            "test_positive_count": int((y_test == 1).sum()),
+        }
+        for name, factory in factories.items():
+            try:
+                # Choose the trading threshold using an earlier slice of this
+                # fold's training data. The final test fold is never used to
+                # select the threshold.
+                # No validation-approved threshold means no trades in this test fold.
+                selected_threshold = 1.0
+                classification_threshold = 0.50
+                classification_threshold_selection = {
+                    "status": "default_no_validation",
+                    "selected_threshold": 0.50,
+                    "selection_data": "validation_only",
+                }
+                threshold_selection = {
+                    "status": "insufficient_validation_data",
+                    "selected_threshold": None,
+                    "selection_data": "validation_only",
+                }
+
+                validation_size = max(12, int(len(train) * 0.20))
+                split_idx = len(train) - validation_size - 4
+
+                if split_idx >= 40:
+                    threshold_train = train.iloc[:split_idx].copy()
+                    # Purge four rows between fit and validation because labels
+                    # use a next-bar entry and a three-bar holding horizon.
+                    validation = train.iloc[split_idx + 4:].copy()
+                    y_threshold_train = threshold_train["Target"].astype(int)
+
+                    if len(validation) >= 12 and y_threshold_train.nunique() == 2:
+                        threshold_base = factory()
+
+                        if len(threshold_train) >= 80:
+                            threshold_model = CalibratedClassifierCV(
+                                threshold_base,
+                                method="sigmoid",
+                                cv=TimeSeriesSplit(n_splits=3, gap=4),
+                            )
+                            threshold_model.fit(
+                                threshold_train[columns],
+                                y_threshold_train,
+                            )
+                        else:
+                            threshold_base.fit(
+                                threshold_train[columns],
+                                y_threshold_train,
+                            )
+                            threshold_model = threshold_base
+
+                        if hasattr(threshold_model, "predict_proba"):
+                            threshold_classes = list(threshold_model.classes_)
+                            threshold_raw = np.asarray(
+                                threshold_model.predict_proba(validation[columns])
+                            )
+                            if 1 in threshold_classes:
+                                validation_probs = threshold_raw[
+                                    :, threshold_classes.index(1)
+                                ]
+                            else:
+                                validation_probs = np.zeros(len(validation), dtype=float)
+                        else:
+                            validation_probs = np.full(
+                                len(validation),
+                                float(y_threshold_train.mean()),
+                            )
+
+                        validation_probs = np.clip(
+                            validation_probs, 1e-6, 1.0 - 1e-6
+                        )
+                        classification_threshold_selection = _select_classification_threshold(
+                            validation["Target"].astype(int), validation_probs
+                        )
+                        classification_threshold = float(
+                            classification_threshold_selection["selected_threshold"]
+                        )
+                        threshold_selection = _select_threshold_from_validation(
+                            validation,
+                            validation_probs,
+                            cost_bps=cost_bps,
+                            horizon_bars=3,
+                            min_trades=5,
+                        )
+                        if threshold_selection["status"] == "selected_on_validation":
+                            selected_threshold = float(
+                                threshold_selection["selected_threshold"]
+                            )
+
+                # Fit the final model on all available training rows only.
+                base=factory()
+                # TimeSeriesSplit keeps calibration folds in chronological order.
+                if len(train) >= 80 and y_train.nunique() == 2:
+                    calibrated = CalibratedClassifierCV(base, method="sigmoid", cv=TimeSeriesSplit(n_splits=3, gap=4))
+                    calibrated.fit(train[columns], y_train)
+                    model = calibrated
+                else:
+                    base.fit(train[columns], y_train); model = base
+                if hasattr(model, "predict_proba"):
+                    class_values = list(model.classes_) if hasattr(model, "classes_") else [0, 1]
+                    raw_probs = np.asarray(model.predict_proba(test[columns]))
+                    probs = raw_probs[:, class_values.index(1)] if 1 in class_values else np.zeros(len(test), dtype=float)
+                else:
+                    probs=np.full(len(test), float(np.mean(y_train)))
+                probs=np.clip(probs, 1e-6, 1-1e-6)
+                # Classification decisions use a threshold selected on the
+                # earlier validation segment, never the final test labels.
+                pred = (probs >= classification_threshold).astype(int)
+                probability_diagnostics = {
+                    "probability_min": float(np.min(probs)),
+                    "probability_median": float(np.median(probs)),
+                    "probability_p90": float(np.percentile(probs, 90)),
+                    "probability_max": float(np.max(probs)),
+                    "probability_mean": float(np.mean(probs)),
+                    "predictions_at_or_above_060": int(np.sum(probs >= 0.60)),
+                    "prediction_count": int(len(probs)),
+                    "prediction_fraction_at_or_above_060": float(np.mean(probs >= 0.60)),
+                }
+                acc=float(accuracy_score(y_test,pred)); bal=float(balanced_accuracy_score(y_test,pred)) if y_test.nunique()>1 else None
+                # Execute signals at next close; only non-overlapping 3-bar holds are allowed.
+                bt = _non_overlapping_long_flat_backtest(
+                    test,
+                    probs,
+                    cost_bps=cost_bps,
+                    threshold=selected_threshold,
+                    horizon_bars=3,
+                )
+                brier=float(brier_score_loss(y_test,probs))
+                auc=float(roc_auc_score(y_test,probs)) if y_test.nunique()>1 else None
+                metrics={"accuracy":acc,"balanced_accuracy":bal,
+                         "precision":float(precision_score(y_test,pred,zero_division=0)),
+                         "recall":float(recall_score(y_test,pred,zero_division=0)),
+                         "f1":float(f1_score(y_test,pred,zero_division=0)),"roc_auc":auc,
+                         "brier_score":brier,"log_loss":float(log_loss(y_test,probs,labels=[0,1])),
+                         "expected_calibration_error":_expected_calibration_error(y_test,probs),
+                         "confusion_matrix": confusion_matrix(y_test, pred, labels=[0, 1]).tolist(),
+                         "confusion_matrix_labels": ["DOWN", "UP"],
+                         "classification_threshold": classification_threshold,
+                         "classification_threshold_selection": classification_threshold_selection,
+                         "threshold_selection": threshold_selection,
+                         "threshold_selection_status": threshold_selection["status"],
+                         "trading_threshold_enabled": bool(threshold_selection["status"] == "selected_on_validation"),
+                         "training_positive_rate": float(y_train.mean()),
+                         "test_positive_rate": float(y_test.mean()),
+                         "prediction_positive_rate": float(np.mean(pred)),
+                         "predicted_positive_count": int(np.sum(pred == 1)),
+                         "predicted_negative_count": int(np.sum(pred == 0)),
+                         **probability_diagnostics, **bt}
+                scores[name].append(metrics); fold_result[name]=metrics
+            except (ValueError, FloatingPointError, IndexError) as exc:
+                fold_result[name]={"error":type(exc).__name__}
+        # Optional LSTM/GRU sequence candidates. Each fold's scaler is fit on train only.
+        if torch_available and len(train) >= 100 and y_train.nunique() == 2:
+            try:
+                mu=train[columns].mean().to_numpy(dtype=np.float32); sd=train[columns].std().replace(0, 1).fillna(1).to_numpy(dtype=np.float32)
+                x_all=((clean[columns].to_numpy(dtype=np.float32)-mu)/sd)
+                y_all=clean["Target"].to_numpy(dtype=np.float32)
+                seq_len=12
+                def make_sequences(indices):
+                    xs=[]; ys=[]
+                    for ix in indices:
+                        if ix >= seq_len-1:
+                            xs.append(x_all[ix-seq_len+1:ix+1]); ys.append(y_all[ix])
+                    return np.asarray(xs,dtype=np.float32), np.asarray(ys,dtype=np.float32)
+                train_indices=np.arange(max(0, int(train.index.min())+seq_len-1), int(train.index.max())+1)
+                test_indices=np.arange(int(test.index.min()), int(test.index.max())+1)
+                xtr,ytr=make_sequences(train_indices); xte,yte=make_sequences(test_indices)
+                if len(xtr)>=40 and len(xte):
+                    for kind in ("LSTM","GRU"):
+                        class SequenceClassifier(nn.Module):
+                            def __init__(self, cell):
+                                super().__init__(); self.rnn=cell(len(columns),16,batch_first=True); self.head=nn.Linear(16,1)
+                            def forward(self,x):
+                                output,_=self.rnn(x); return self.head(output[:,-1,:]).squeeze(-1)
+                        cell=nn.LSTM if kind=="LSTM" else nn.GRU
+                        net_model=SequenceClassifier(cell); optimizer=torch.optim.Adam(net_model.parameters(),lr=0.003); loss_fn=nn.BCEWithLogitsLoss()
+                        tx=torch.tensor(xtr); ty=torch.tensor(ytr)
+                        net_model.train()
+                        for _epoch in range(8):
+                            optimizer.zero_grad(); loss=loss_fn(net_model(tx),ty); loss.backward(); optimizer.step()
+                        net_model.eval()
+                        with torch.no_grad(): probs=torch.sigmoid(net_model(torch.tensor(xte))).numpy()
+                        probs=np.clip(probs,1e-6,1-1e-6)
+                        probability_diagnostics = {
+                            "probability_min": float(np.min(probs)),
+                            "probability_median": float(np.median(probs)),
+                            "probability_p90": float(np.percentile(probs, 90)),
+                            "probability_max": float(np.max(probs)),
+                            "probability_mean": float(np.mean(probs)),
+                            "predictions_at_or_above_060": int(np.sum(probs >= 0.60)),
+                            "prediction_count": int(len(probs)),
+                            "prediction_fraction_at_or_above_060": float(np.mean(probs >= 0.60)),
+                        }
+                        pred=(probs>=0.5).astype(int)
+                        seq_test = clean.loc[test_indices[-len(probs):]].copy()
+                        bt = _non_overlapping_long_flat_backtest(seq_test, probs, cost_bps=cost_bps, threshold=0.60, horizon_bars=3)
+                        metrics={"accuracy":float(accuracy_score(yte.astype(int),pred)),
+                                 "balanced_accuracy":float(balanced_accuracy_score(yte.astype(int),pred)) if len(np.unique(yte))>1 else None,
+                                 "precision":float(precision_score(yte.astype(int),pred,zero_division=0)),
+                                 "recall":float(recall_score(yte.astype(int),pred,zero_division=0)),
+                                 "f1":float(f1_score(yte.astype(int),pred,zero_division=0)),
+                                 "roc_auc":float(roc_auc_score(yte.astype(int),probs)) if len(np.unique(yte))>1 else None,
+                                 "brier_score":float(brier_score_loss(yte,probs)),"log_loss":float(log_loss(yte,probs,labels=[0,1])),
+                                 "expected_calibration_error":_expected_calibration_error(yte,probs),**bt}
+                        sequence_scores[kind].append(metrics); fold_result[kind]=metrics
+            except (ValueError, RuntimeError, IndexError) as exc:
+                fold_result["sequence_models_error"]=type(exc).__name__
+        folds_out.append(fold_result)
+    comparison=[]
+    for name, items in list(scores.items()) + list(baseline_scores.items()) + list(sequence_scores.items()):
+        if items:
+            comparison.append({
+                "model": name,
+                "folds_evaluated": len(items),
+                "mean_accuracy": float(np.mean([x["accuracy"] for x in items])),
+                "mean_balanced_accuracy": float(np.nanmean([x["balanced_accuracy"] if x["balanced_accuracy"] is not None else np.nan for x in items])) if any(x["balanced_accuracy"] is not None for x in items) else None,
+                "mean_brier_score": float(np.mean([x["brier_score"] for x in items])),
+                "mean_log_loss": float(np.mean([x["log_loss"] for x in items])),
+                "mean_ece": float(np.mean([x["expected_calibration_error"] for x in items if x["expected_calibration_error"] is not None])) if any(x["expected_calibration_error"] is not None for x in items) else None,
+                "mean_precision": float(np.mean([x["precision"] for x in items if x.get("precision") is not None])) if any(x.get("precision") is not None for x in items) else None,
+                "mean_recall": float(np.mean([x["recall"] for x in items if x.get("recall") is not None])) if any(x.get("recall") is not None for x in items) else None,
+                "mean_f1": float(np.mean([x["f1"] for x in items if x.get("f1") is not None])) if any(x.get("f1") is not None for x in items) else None,
+                "mean_roc_auc": float(np.mean([x["roc_auc"] for x in items if x.get("roc_auc") is not None])) if any(x.get("roc_auc") is not None for x in items) else None,
+                "mean_fold_net_return_pct": float(np.mean([x["net_return_pct"] for x in items if x.get("net_return_pct") is not None])) if any(x.get("net_return_pct") is not None for x in items) else None,
+                "mean_fold_benchmark_return_pct": float(np.mean([x["gross_benchmark_return_pct"] for x in items if x.get("gross_benchmark_return_pct") is not None])) if any(x.get("gross_benchmark_return_pct") is not None for x in items) else None,
+                "mean_fold_max_drawdown": float(np.mean([x["max_drawdown"] for x in items if x.get("max_drawdown") is not None])) if any(x.get("max_drawdown") is not None for x in items) else None,
+                "sum_test_net_return_pct_deprecated_non_compounded": float(sum(x["net_return_pct"] for x in items if x.get("net_return_pct") is not None)),
+                "test_trades": int(sum(x["trades"] for x in items)),
+            })
+    comparison.sort(key=lambda x:(x["mean_brier_score"],-x["mean_accuracy"]))
+    sequence_status={kind:("trained_and_evaluated_on_chronological_folds" if values else ("installed_but_insufficient_data_or_training_failed" if torch_available else "skipped: install torch in a separate research environment")) for kind,values in sequence_scores.items()}
+    gate={"authorized":False,"reason":"Research endpoint never enables demo trading. Gate implementation requires positive net performance across at least 3 folds, calibrated probability error thresholds, adequate trade count and persistent outcome monitoring.","required_checks":{"minimum_folds":3,"minimum_trades":30,"maximum_mean_brier_score":0.24,"maximum_mean_ece":0.10,"positive_net_return_after_assumed_costs":True}}
+    return {"status":"evaluated","observations":n,"feature_columns":columns,"target":"direction of executable return from next close to close four bars after signal (3 bars held)","folds":folds_out,"model_comparison":comparison,"sequence_models":sequence_status,"probability_calibration":{"method":"sigmoid calibration with chronological TimeSeriesSplit within training folds when sufficient samples exist","metrics":["Brier score (lower is better)","log loss (lower is better)","expected calibration error (lower is better)"],"note":"Calibration metrics are measured on held-out chronological test folds; small training folds use uncalibrated model probabilities and must not be treated as calibrated."},"cost_assumption":{"one_way_basis_points":cost_bps,"round_trip_basis_points":2*cost_bps,"includes":"user-configured aggregate per-side cost proxy only","excludes":"exact broker brokerage, STT, exchange transaction charges, GST, SEBI fees, stamp duty, bid-ask spread, market impact, latency and slippage unless reflected in the user's cost_bps","note":"Set cost_bps conservatively for research; this is not a full Indian transaction-cost calculator."},"demo_trading_gate":gate,"method":"Expanding-window walk-forward; no shuffle; 4-row purge for next-close entry and 3-bar hold; preprocessing/calibration fit within training data; final four unlabeled bars excluded. Fold trading returns use non-overlapping windows and compound equity.","baseline_method":"Majority class and constant training-prevalence probability are recomputed independently from each fold training segment; test labels are never used to construct baselines.","limitations":["No model is selected automatically from a single backtest; a good historical score is not proof of future profit.","Majority-class and constant-probability baselines are fold-specific references, not tradable strategies.","Added EMA gaps, candle body percentage and close-location features are causal and use current/past candle OHLC only.","News availability timestamps protect against historical leakage, but provider news history is limited and may leave most older candles without news features.","Demo trading remains disabled until validation checks pass and the system is explicitly reviewed; no orders are placed by this endpoint."]}
+
+def fetch_upstox_intraday(instrument_key: str, interval: int = 5) -> dict:
+    token = os.getenv("UPSTOX_ACCESS_TOKEN", "").strip()
+    if not token:
+        raise RuntimeError("UPSTOX_ACCESS_TOKEN is not configured. Add your token to services/api/.env; never paste it into chat.")
+    if not instrument_key or len(instrument_key) > 100 or "|" not in instrument_key:
+        raise ValueError("A valid Upstox instrument_key is required (for example NSE_EQ|INE...); ticker names alone are not enough.")
+    if interval not in {1, 2, 3, 5, 10, 15, 30}:
+        raise ValueError("Interval must be one of 1, 2, 3, 5, 10, 15 or 30 minutes.")
+    try:
+        import requests
+    except ImportError as exc:
+        raise RuntimeError("Install requests to enable the Upstox intraday candle client.") from exc
+    url=f"https://api.upstox.com/v3/historical-candle/intraday/{quote(instrument_key, safe='')}/minutes/{interval}"
+    response=requests.get(url, headers={"Accept":"application/json","Authorization":f"Bearer {token}"}, timeout=12)
+    if response.status_code in (401,403):
+        raise RuntimeError(f"Upstox rejected intraday data access (HTTP {response.status_code}); check token, permissions and instrument key.")
+    response.raise_for_status(); payload=response.json()
+    candles=payload.get("data",{}).get("candles",[])
+    rows=[]
+    for row in candles:
+        if len(row)>=6:
+            rows.append({"timestamp":row[0],"open":row[1],"high":row[2],"low":row[3],"close":row[4],"volume":row[5]})
+    if not rows:
+        raise LookupError("Upstox returned no intraday candles. The market may be closed or the instrument key may be invalid.")
+    return {"candles":rows,"provider":"Upstox V3 intraday candles","instrument_key":instrument_key,"interval_minutes":interval,"fetched_at":datetime.now(timezone.utc).isoformat(),"source_url":url}
+
+
+def fetch_upstox_historical(
+    instrument_key: str,
+    interval: int = 5,
+    to_date: str | None = None,
+    from_date: str | None = None,
+) -> dict:
+    """Fetch genuine historical OHLCV candles from Upstox V3."""
+    import os
+    from datetime import date, timedelta
+    from urllib.parse import quote
+
+    import pandas as pd
+    import requests
+
+    token = os.getenv("UPSTOX_ACCESS_TOKEN", "").strip()
+    if not token:
+        raise RuntimeError(
+            "UPSTOX_ACCESS_TOKEN is missing from services/api/.env"
+        )
+
+    if not instrument_key or "|" not in instrument_key:
+        raise ValueError("A valid Upstox instrument key is required.")
+
+    if interval < 1 or interval > 300:
+        raise ValueError(
+            "This evaluation function supports 1-15 minute candles."
+        )
+
+    end = date.fromisoformat(to_date) if to_date else date.today()
+    start = (
+        date.fromisoformat(from_date)
+        if from_date
+        else end - timedelta(days=28 if interval <= 15 else 89)
+    )
+
+    if start > end:
+        raise ValueError("from_date must not be later than to_date.")
+
+    max_days = 30 if interval <= 15 else 90
+    if (end - start).days > max_days:
+        raise ValueError(
+            "Request no more than 30 days for 1-15 minute candles."
+            if interval <= 15
+            else "Request no more than 90 days for intervals above 15 minutes."
+        )
+
+    encoded_key = quote(instrument_key, safe="")
+    url = (
+        "https://api.upstox.com/v3/historical-candle/"
+        f"{encoded_key}/minutes/{interval}/{end.isoformat()}/"
+        f"{start.isoformat()}"
+    )
+
+    response = requests.get(
+        url,
+        headers={
+            "Accept": "application/json",
+            "Authorization": f"Bearer {token}",
+        },
+        timeout=30,
+    )
+
+    if response.status_code in (401, 403):
+        raise RuntimeError(
+            f"Upstox rejected historical data access: HTTP "
+            f"{response.status_code}. Check token permissions."
+        )
+
+    response.raise_for_status()
+    payload = response.json()
+    rows = []
+
+    for candle in payload.get("data", {}).get("candles", []):
+        if len(candle) >= 6:
+            rows.append({
+                "timestamp": candle[0],
+                "open": candle[1],
+                "high": candle[2],
+                "low": candle[3],
+                "close": candle[4],
+                "volume": candle[5],
+            })
+
+    if not rows:
+        raise LookupError(
+            "Upstox returned no historical candles for this date range."
+        )
+
+    candles = pd.DataFrame(rows)
+    candles["timestamp"] = pd.to_datetime(
+        candles["timestamp"], utc=True, errors="coerce"
+    )
+    candles = (
+        candles.dropna(subset=["timestamp"])
+        .drop_duplicates("timestamp", keep="last")
+        .sort_values("timestamp")
+        .reset_index(drop=True)
+    )
+
+    return {
+        "candles": candles.to_dict(orient="records"),
+        "provider": "Upstox V3 historical candles",
+        "instrument_key": instrument_key,
+        "interval_minutes": interval,
+        "from_date": start.isoformat(),
+        "to_date": end.isoformat(),
+        "fetched_at": pd.Timestamp.now(tz="UTC").isoformat(),
+        "source_url": url,
+    }
+
+
+def fetch_upstox_news(instrument_keys: list[str]) -> dict:
+    """Fetch instrument-linked headlines from the documented Upstox News API."""
+    token = os.getenv("UPSTOX_ACCESS_TOKEN", "").strip()
+    if not token:
+        raise RuntimeError("UPSTOX_ACCESS_TOKEN is not configured. Add it to services/api/.env; never paste it into chat.")
+    keys = list(dict.fromkeys(k.strip() for k in instrument_keys if k.strip()))
+    if not keys or len(keys) > 30:
+        raise ValueError("Provide 1 to 30 Upstox instrument keys per news request.")
+    if any("|" not in key or len(key) > 100 for key in keys):
+        raise ValueError("Every item must be a valid Upstox instrument key, not a Yahoo ticker symbol.")
+    try:
+        import requests
+    except ImportError as exc:
+        raise RuntimeError("Install requests to enable the Upstox News API client.") from exc
+    response = requests.get("https://api.upstox.com/v2/news", params={"category":"instrument_keys", "instrument_keys":",".join(keys), "page_number":1, "page_size":100}, headers={"Accept":"application/json", "Authorization":f"Bearer {token}"}, timeout=12)
+    if response.status_code in (401, 403):
+        raise RuntimeError(f"Upstox rejected news access (HTTP {response.status_code}); check token and API permissions.")
+    response.raise_for_status()
+    payload = response.json()
+    if payload.get("status") != "success":
+        raise RuntimeError("Upstox News API did not return a success status.")
+    normalized = []
+    for instrument, items in (payload.get("data") or {}).items():
+        for article in items or []:
+            heading = str(article.get("heading") or "").strip()
+            if not heading:
+                continue
+            try:
+                published = datetime.fromtimestamp(float(article["published_time"]) / 1000, tz=timezone.utc)
+            except (KeyError, TypeError, ValueError, OSError):
+                # Do not infer a publication time for a news record with no valid timestamp.
+                continue
+            normalized.append({"instrument_key":instrument, "headline":heading,
+                "summary":str(article.get("summary") or "")[:4000],
+                "source_url":str(article.get("article_link") or "")[:2000],
+                "thumbnail_url":str(article.get("thumbnail") or "")[:2000],
+                "published_at":published.isoformat(), "source":"Upstox News API", "event_type":"news",
+                "sentiment_score":score_headline(heading + " " + str(article.get("summary") or ""))})
+    return {"provider":"Upstox News API", "fetched_at":datetime.now(timezone.utc).isoformat(),
+            "requested_instruments":keys, "count":len(normalized), "articles":normalized,
+            "history_limit":"Provider returns articles published in the past seven days; this is not a historical news archive."}

@@ -1,0 +1,46 @@
+{
+  "snapshot_type": "user-provided live API prediction response summary",
+  "snapshot_date": "2026-11-20",
+  "symbol": "RELIANCE.NS",
+  "latest_session_date": "2026-11-20",
+  "latest_close": 1360.300048828125,
+  "predicted_direction": "DOWN",
+  "model": "RandomForest + ExtraTrees soft-voting ensemble",
+  "model_version": "bharatstock-rf-et-v1",
+  "model_artifact_status": "trained_and_saved",
+  "training_rows": 1187,
+  "feature_schema": [
+    "RSI",
+    "MACD_pct",
+    "MACD_Signal_pct",
+    "SMA20_gap",
+    "SMA50_gap",
+    "EMA20_gap",
+    "ATR_pct",
+    "Return_5"
+  ],
+  "confidence": 0.5091976708621432,
+  "up_probability": 0.4908023291378568,
+  "validation_status": "WEAK_BELOW_BASELINE",
+  "walk_forward": {
+    "folds": 5,
+    "observations": 474,
+    "mean_accuracy": 0.4493617021276596,
+    "mean_balanced_accuracy": 0.45146306539883907,
+    "mean_majority_baseline_accuracy": 0.5126315789473684,
+    "accuracy_gap_vs_baseline": -0.06326987681970886,
+    "mean_brier_score": 0.2595847222162666,
+    "mean_log_loss": 0.7128774835943468,
+    "selection_status": "NO_CANDIDATE_CLEARED_BASELINE_GATE",
+    "production_model_changed": false
+  },
+  "previously_inspected_holdout": {
+    "observations": 238,
+    "accuracy": 0.5336134453781513,
+    "balanced_accuracy": 0.5357546636517807,
+    "majority_baseline_accuracy": 0.48739495798319327,
+    "status": "DIAGNOSTIC_ONLY_NOT_FRESH_CONFIRMATORY"
+  },
+  "interpretation": "The chronological walk-forward result is below its fold-trained majority baseline. The previously inspected holdout is diagnostic only. Confidence is an uncalibrated model score, not a probability of profit.",
+  "trading_authorized": false
+}

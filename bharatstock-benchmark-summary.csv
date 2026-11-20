@@ -1,0 +1,7 @@
+"File","Symbol","Interval","Candles","Observations","Folds","NewsEvents","BestModel","Accuracy","BalancedAccuracy","ROC_AUC","BrierScore","MeanNetReturn","Trades","TradingAuthorized"
+"intraday-research-10m.json","RELIANCE.NS","10","729","687","3","37","HistGradientBoosting","49.71","50.88","0.5118","0.2518","0.0","0","False"
+"intraday-research-15m.json","RELIANCE.NS","15","480","456","3","37","Logistic Regression","52.19","53.41","0.5461","0.2501","0.0","0","False"
+"intraday-research-HDFCBANK-15m.json","HDFCBANK.NS","15","480","456","3","0","Logistic Regression","59.65","50.93","0.4884","0.2487","-1.0505","21","False"
+"intraday-research-INFY-15m.json","INFY.NS","15","480","455","3","0","HistGradientBoosting","57.02","55.16","0.5809","0.2449","0.0","0","False"
+"intraday-research-result.json","RELIANCE.NS","5","1439","1377","3","37","Logistic Regression","51.22","51.31","0.5069","0.2507","0.0","0","False"
+"intraday-research-TCS-15m.json","TCS.NS","15","480","456","3","0","Logistic Regression","64.91","59.27","0.6516","0.2295","0.0","0","False"

@@ -1,0 +1,64 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: bharatstock
+      POSTGRES_USER: bharatstock
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bharatstock_dev_password}
+    ports:
+       - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bharatstock -d bharatstock"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  model-artifacts-init:
+    image: busybox:1.36
+    user: "0:0"
+    command: ["sh", "-c", "mkdir -p /models && chown -R 10001:10001 /models && chmod -R u+rwX /models"]
+    volumes:
+      - model_artifacts:/models
+    restart: "no"
+  api:
+    build: ./services/api
+    environment:
+      DATABASE_URL: postgresql+psycopg://bharatstock:${POSTGRES_PASSWORD:-bharatstock_dev_password}@db:5432/bharatstock
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+      UPSTOX_ACCESS_TOKEN: ${UPSTOX_ACCESS_TOKEN:-}
+      UPSTOX_STREAM_ENABLED: ${UPSTOX_STREAM_ENABLED:-true}
+      UPSTOX_INSTRUMENT_KEYS: ${UPSTOX_INSTRUMENT_KEYS:-}
+      UPSTOX_STALE_TICK_SECONDS: ${UPSTOX_STALE_TICK_SECONDS:-30}
+      UPSTOX_STREAM_REQUIRED: ${UPSTOX_STREAM_REQUIRED:-false}
+      BHARATSTOCK_MODEL_DIR: /app/model_artifacts
+    ports:
+      - "8000:8000"
+    volumes:
+      - model_artifacts:/app/model_artifacts
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 4s
+      start_period: 20s
+      retries: 3
+    depends_on:
+      db:
+        condition: service_healthy
+      model-artifacts-init:
+        condition: service_completed_successfully
+  web:
+    build:
+      context: ./apps/web
+      args:
+        VITE_API_URL: ${VITE_API_URL:-}
+    ports:
+      - "${WEB_PORT:-8081}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  pgdata:
+  model_artifacts:

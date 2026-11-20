@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "BharatStock AI",
+    "slug": "bharatstock-ai",
+    "scheme": "bharatstock",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "plugins": [
+      "expo-router",
+      "expo-asset"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

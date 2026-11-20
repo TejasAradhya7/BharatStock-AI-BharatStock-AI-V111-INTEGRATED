@@ -1,0 +1,434 @@
+﻿FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 406
+MATCH:             "status": "no_eligible_threshold",
+CONTEXT BEFORE:
+
+    if not eligible:
+        return {
+CONTEXT AFTER:
+            "selected_threshold": None,
+            "min_trades_required": min_trades,
+            "candidate_thresholds": list(candidates),
+            "selection_data": "validation_only",
+        }
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 418
+MATCH:             "status": "no_profitable_threshold",
+CONTEXT BEFORE:
+    profitable = [item for item in eligible if item["net_return_pct"] > 0.0]
+    if not profitable:
+        return {
+CONTEXT AFTER:
+            "selected_threshold": None,
+            "min_trades_required": min_trades,
+            "candidate_thresholds": list(candidates),
+            "selection_data": "validation_only",
+        }
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 651
+MATCH:                          "threshold_selection_status": threshold_selection["status"],
+CONTEXT BEFORE:
+                         "brier_score":brier,"log_loss":float(log_loss(y_test,probs,labels=[0,1])),
+                         "expected_calibration_error":_expected_calibration_error(y_test,probs),
+                         "threshold_selection": threshold_selection,
+CONTEXT AFTER:
+                         "trading_threshold_enabled": bool(threshold_selection["status"] == "selected_on_validation"),
+                         "training_positive_rate": float(y_train.mean()),
+                         "test_positive_rate": float(y_test.mean()),
+                         "prediction_positive_rate": float(np.mean(pred)),
+                         "predicted_positive_count": int(np.sum(pred == 1)),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 652
+MATCH:                          "trading_threshold_enabled": bool(threshold_selection["status"] == "selected_on_validation"),
+CONTEXT BEFORE:
+                         "expected_calibration_error":_expected_calibration_error(y_test,probs),
+                         "threshold_selection": threshold_selection,
+                         "threshold_selection_status": threshold_selection["status"],
+CONTEXT AFTER:
+                         "training_positive_rate": float(y_train.mean()),
+                         "test_positive_rate": float(y_test.mean()),
+                         "prediction_positive_rate": float(np.mean(pred)),
+                         "predicted_positive_count": int(np.sum(pred == 1)),
+                         "predicted_negative_count": int(np.sum(pred == 0)),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 219
+MATCH:             "signal_threshold": threshold,
+CONTEXT BEFORE:
+            "max_drawdown": None,
+            "trades": 0,
+            "non_overlapping_candidates": 0,
+CONTEXT AFTER:
+            "round_trip_cost_bps": 2.0 * cost_bps,
+            "backtest_method": (
+                "next-close entry; non-overlapping fixed hold; "
+                "compounded; matched windows"
+            ),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 256
+MATCH:             "signal_threshold": threshold,
+CONTEXT BEFORE:
+            "max_drawdown": None,
+            "trades": 0,
+            "non_overlapping_candidates": 0,
+CONTEXT AFTER:
+            "round_trip_cost_bps": 2.0 * cost_bps,
+            "backtest_method": (
+                "next-close entry; non-overlapping fixed hold; "
+                "compounded; matched windows"
+            ),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 288
+MATCH:             "signal_threshold": threshold,
+CONTEXT BEFORE:
+            "max_drawdown": None,
+            "trades": 0,
+            "non_overlapping_candidates": 0,
+CONTEXT AFTER:
+            "round_trip_cost_bps": 2.0 * cost_bps,
+            "backtest_method": (
+                "next-close entry; non-overlapping fixed hold; "
+                "compounded; matched windows"
+            ),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 345
+MATCH:         "signal_threshold": threshold,
+CONTEXT BEFORE:
+        "max_drawdown": float(drawdown.min()),
+        "trades": int(active.sum()),
+        "non_overlapping_candidates": int(len(entries)),
+CONTEXT AFTER:
+        "round_trip_cost_bps": float(2.0 * cost_bps),
+        "backtest_method": (
+            "next-close entry; non-overlapping fixed hold; "
+            "compounded; matched buy-and-hold windows"
+        ),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 519
+MATCH:                 "prediction_positive_rate": float(np.mean(baseline_pred)),
+CONTEXT BEFORE:
+                "expected_calibration_error": _expected_calibration_error(y_test, baseline_probs),
+                "training_positive_rate": train_prevalence,
+                "test_positive_rate": float(y_test.mean()),
+CONTEXT AFTER:
+                "prediction_class": majority_class,
+                **_non_overlapping_long_flat_backtest(test, baseline_probs, cost_bps=cost_bps, threshold=1.0, horizon_bars=3),
+            }
+            baseline_scores[baseline_name].append(baseline_metrics)
+            fold_result[baseline_name] = baseline_metrics
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 655
+MATCH:                          "prediction_positive_rate": float(np.mean(pred)),
+CONTEXT BEFORE:
+                         "trading_threshold_enabled": bool(threshold_selection["status"] == "selected_on_validation"),
+                         "training_positive_rate": float(y_train.mean()),
+                         "test_positive_rate": float(y_test.mean()),
+CONTEXT AFTER:
+                         "predicted_positive_count": int(np.sum(pred == 1)),
+                         "predicted_negative_count": int(np.sum(pred == 0)),
+                         **probability_diagnostics, **bt}
+                scores[name].append(metrics); fold_result[name]=metrics
+            except (ValueError, FloatingPointError, IndexError) as exc:
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 624
+MATCH:                     "probability_min": float(np.min(probs)),
+CONTEXT BEFORE:
+                    probs=np.full(len(test), float(np.mean(y_train)))
+                probs=np.clip(probs, 1e-6, 1-1e-6)
+                probability_diagnostics = {
+CONTEXT AFTER:
+                    "probability_median": float(np.median(probs)),
+                    "probability_p90": float(np.percentile(probs, 90)),
+                    "probability_max": float(np.max(probs)),
+                    "probability_mean": float(np.mean(probs)),
+                    "predictions_at_or_above_060": int(np.sum(probs >= 0.60)),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 695
+MATCH:                             "probability_min": float(np.min(probs)),
+CONTEXT BEFORE:
+                        with torch.no_grad(): probs=torch.sigmoid(net_model(torch.tensor(xte))).numpy()
+                        probs=np.clip(probs,1e-6,1-1e-6)
+                        probability_diagnostics = {
+CONTEXT AFTER:
+                            "probability_median": float(np.median(probs)),
+                            "probability_p90": float(np.percentile(probs, 90)),
+                            "probability_max": float(np.max(probs)),
+                            "probability_mean": float(np.mean(probs)),
+                            "predictions_at_or_above_060": int(np.sum(probs >= 0.60)),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 625
+MATCH:                     "probability_median": float(np.median(probs)),
+CONTEXT BEFORE:
+                probs=np.clip(probs, 1e-6, 1-1e-6)
+                probability_diagnostics = {
+                    "probability_min": float(np.min(probs)),
+CONTEXT AFTER:
+                    "probability_p90": float(np.percentile(probs, 90)),
+                    "probability_max": float(np.max(probs)),
+                    "probability_mean": float(np.mean(probs)),
+                    "predictions_at_or_above_060": int(np.sum(probs >= 0.60)),
+                    "prediction_count": int(len(probs)),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 696
+MATCH:                             "probability_median": float(np.median(probs)),
+CONTEXT BEFORE:
+                        probs=np.clip(probs,1e-6,1-1e-6)
+                        probability_diagnostics = {
+                            "probability_min": float(np.min(probs)),
+CONTEXT AFTER:
+                            "probability_p90": float(np.percentile(probs, 90)),
+                            "probability_max": float(np.max(probs)),
+                            "probability_mean": float(np.mean(probs)),
+                            "predictions_at_or_above_060": int(np.sum(probs >= 0.60)),
+                            "prediction_count": int(len(probs)),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 130
+MATCH: def _expected_calibration_error(y_true, probabilities, bins: int = 10) -> float | None:
+CONTEXT BEFORE:
+    return out
+
+
+CONTEXT AFTER:
+    """Compute ECE on a held-out chronological fold; lower is better."""
+    y = np.asarray(y_true, dtype=int)
+    p = np.asarray(probabilities, dtype=float)
+    if len(y) == 0 or len(y) != len(p) or not np.isfinite(p).all():
+        return None
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 516
+MATCH:                 "expected_calibration_error": _expected_calibration_error(y_test, baseline_probs),
+CONTEXT BEFORE:
+                "roc_auc": None,
+                "brier_score": float(brier_score_loss(y_test, baseline_probs)),
+                "log_loss": float(log_loss(y_test, baseline_probs, labels=[0, 1])),
+CONTEXT AFTER:
+                "training_positive_rate": train_prevalence,
+                "test_positive_rate": float(y_test.mean()),
+                "prediction_positive_rate": float(np.mean(baseline_pred)),
+                "prediction_class": majority_class,
+                **_non_overlapping_long_flat_backtest(test, baseline_probs, cost_bps=cost_bps, threshold=1.0, horizon_bars=3),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 649
+MATCH:                          "expected_calibration_error":_expected_calibration_error(y_test,probs),
+CONTEXT BEFORE:
+                         "recall":float(recall_score(y_test,pred,zero_division=0)),
+                         "f1":float(f1_score(y_test,pred,zero_division=0)),"roc_auc":auc,
+                         "brier_score":brier,"log_loss":float(log_loss(y_test,probs,labels=[0,1])),
+CONTEXT AFTER:
+                         "threshold_selection": threshold_selection,
+                         "threshold_selection_status": threshold_selection["status"],
+                         "trading_threshold_enabled": bool(threshold_selection["status"] == "selected_on_validation"),
+                         "training_positive_rate": float(y_train.mean()),
+                         "test_positive_rate": float(y_test.mean()),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 714
+MATCH:                                  "expected_calibration_error":_expected_calibration_error(yte,probs),**bt}
+CONTEXT BEFORE:
+                                 "f1":float(f1_score(yte.astype(int),pred,zero_division=0)),
+                                 "roc_auc":float(roc_auc_score(yte.astype(int),probs)) if len(np.unique(yte))>1 else None,
+                                 "brier_score":float(brier_score_loss(yte,probs)),"log_loss":float(log_loss(yte,probs,labels=[0,1])),
+CONTEXT AFTER:
+                        sequence_scores[kind].append(metrics); fold_result[kind]=metrics
+            except (ValueError, RuntimeError, IndexError) as exc:
+                fold_result["sequence_models_error"]=type(exc).__name__
+        folds_out.append(fold_result)
+    comparison=[]
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 729
+MATCH:                 "mean_ece": float(np.mean([x["expected_calibration_error"] for x in items if x["expected_calibration_error"] is not None])) if any(x["expected_calibration_error"] is not None for x in items) else None,
+CONTEXT BEFORE:
+                "mean_balanced_accuracy": float(np.nanmean([x["balanced_accuracy"] if x["balanced_accuracy"] is not None else np.nan for x in items])) if any(x["balanced_accuracy"] is not None for x in items) else None,
+                "mean_brier_score": float(np.mean([x["brier_score"] for x in items])),
+                "mean_log_loss": float(np.mean([x["log_loss"] for x in items])),
+CONTEXT AFTER:
+                "mean_precision": float(np.mean([x["precision"] for x in items if x.get("precision") is not None])) if any(x.get("precision") is not None for x in items) else None,
+                "mean_recall": float(np.mean([x["recall"] for x in items if x.get("recall") is not None])) if any(x.get("recall") is not None for x in items) else None,
+                "mean_f1": float(np.mean([x["f1"] for x in items if x.get("f1") is not None])) if any(x.get("f1") is not None for x in items) else None,
+                "mean_roc_auc": float(np.mean([x["roc_auc"] for x in items if x.get("roc_auc") is not None])) if any(x.get("roc_auc") is not None for x in items) else None,
+                "mean_fold_net_return_pct": float(np.mean([x["net_return_pct"] for x in items if x.get("net_return_pct") is not None])) if any(x.get("net_return_pct") is not None for x in items) else None,
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\main.py
+LINE: 1407
+MATCH:         writer.writerow(["date", "close", "position_long", "daily_market_return_pct", "daily_strategy_gross_return_pct", "estimated_cost_pct", "daily_strategy_net_return_pct", "strategy_gross_equity_base_1", "strategy_net_equity_base_1", "buy_hold_equity_base_1", "strategy_drawdown_pct"])
+CONTEXT BEFORE:
+        drawdown = net_curve / net_curve.cummax() - 1.0
+        output = io.StringIO(newline="")
+        writer = csv.writer(output)
+CONTEXT AFTER:
+        dates = close.index
+        for i, date in enumerate(dates):
+            writer.writerow([
+                str(date.date() if hasattr(date, "date") else date),
+                round(float(close.iloc[i]), 6),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 214
+MATCH:             "net_return_pct": None,
+CONTEXT BEFORE:
+    # Need a signal candle, a next-close entry, and a full holding period.
+    if n <= horizon_bars + 1:
+        return {
+CONTEXT AFTER:
+            "gross_benchmark_return_pct": None,
+            "max_drawdown": None,
+            "trades": 0,
+            "non_overlapping_candidates": 0,
+            "signal_threshold": threshold,
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 251
+MATCH:             "net_return_pct": None,
+CONTEXT BEFORE:
+
+    if len(positions) == 0:
+        return {
+CONTEXT AFTER:
+            "gross_benchmark_return_pct": None,
+            "max_drawdown": None,
+            "trades": 0,
+            "non_overlapping_candidates": 0,
+            "signal_threshold": threshold,
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 283
+MATCH:             "net_return_pct": None,
+CONTEXT BEFORE:
+
+    if len(entries) == 0:
+        return {
+CONTEXT AFTER:
+            "gross_benchmark_return_pct": None,
+            "max_drawdown": None,
+            "trades": 0,
+            "non_overlapping_candidates": 0,
+            "signal_threshold": threshold,
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 336
+MATCH:         "net_return_pct": float(
+CONTEXT BEFORE:
+
+    return {
+        "status": "ok",
+CONTEXT AFTER:
+            (strategy_equity[-1] - 1.0) * 100.0
+        ),
+        "gross_benchmark_return_pct": float(
+            (benchmark_equity[-1] - 1.0) * 100.0
+        ),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 390
+MATCH:         net_return = result.get("net_return_pct")
+CONTEXT BEFORE:
+            horizon_bars=horizon_bars,
+        )
+        trades = int(result.get("trades", 0))
+CONTEXT AFTER:
+
+        if (
+            trades >= min_trades
+            and result.get("status") == "ok"
+            and net_return is not None
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 401
+MATCH:                 "net_return_pct": float(net_return),
+CONTEXT BEFORE:
+            eligible.append({
+                "threshold": threshold,
+                "trades": trades,
+CONTEXT AFTER:
+            })
+
+    if not eligible:
+        return {
+            "status": "no_eligible_threshold",
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 415
+MATCH:     profitable = [item for item in eligible if item["net_return_pct"] > 0.0]
+CONTEXT BEFORE:
+
+    # Fail closed: a threshold that merely meets the trade-count rule but
+    # loses money after assumed costs is not a usable research threshold.
+CONTEXT AFTER:
+    if not profitable:
+        return {
+            "status": "no_profitable_threshold",
+            "selected_threshold": None,
+            "min_trades_required": min_trades,
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 428
+MATCH:         key=lambda item: (item["net_return_pct"], item["threshold"]),
+CONTEXT BEFORE:
+    # Maximize validation return only; break ties toward the higher threshold.
+    best = max(
+        profitable,
+CONTEXT AFTER:
+    )
+    return {
+        "status": "selected_on_validation",
+        "selected_threshold": float(best["threshold"]),
+        "validation_trades": int(best["trades"]),
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 434
+MATCH:         "validation_net_return_pct": float(best["net_return_pct"]),
+CONTEXT BEFORE:
+        "status": "selected_on_validation",
+        "selected_threshold": float(best["threshold"]),
+        "validation_trades": int(best["trades"]),
+CONTEXT AFTER:
+        "min_trades_required": min_trades,
+        "candidate_thresholds": list(candidates),
+        "selection_data": "validation_only",
+    }
+
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 734
+MATCH:                 "mean_fold_net_return_pct": float(np.mean([x["net_return_pct"] for x in items if x.get("net_return_pct") is not None])) if any(x.get("net_return_pct") is not None for x in items) else None,
+CONTEXT BEFORE:
+                "mean_recall": float(np.mean([x["recall"] for x in items if x.get("recall") is not None])) if any(x.get("recall") is not None for x in items) else None,
+                "mean_f1": float(np.mean([x["f1"] for x in items if x.get("f1") is not None])) if any(x.get("f1") is not None for x in items) else None,
+                "mean_roc_auc": float(np.mean([x["roc_auc"] for x in items if x.get("roc_auc") is not None])) if any(x.get("roc_auc") is not None for x in items) else None,
+CONTEXT AFTER:
+                "mean_fold_benchmark_return_pct": float(np.mean([x["gross_benchmark_return_pct"] for x in items if x.get("gross_benchmark_return_pct") is not None])) if any(x.get("gross_benchmark_return_pct") is not None for x in items) else None,
+                "mean_fold_max_drawdown": float(np.mean([x["max_drawdown"] for x in items if x.get("max_drawdown") is not None])) if any(x.get("max_drawdown") is not None for x in items) else None,
+                "sum_test_net_return_pct_deprecated_non_compounded": float(sum(x["net_return_pct"] for x in items if x.get("net_return_pct") is not None)),
+                "test_trades": int(sum(x["trades"] for x in items)),
+            })
+----------------------------------------
+FILE: E:\BharatStock-AI-19\BharatStock-AI-4-CLEAN\services\api\app\real_world.py
+LINE: 737
+MATCH:                 "sum_test_net_return_pct_deprecated_non_compounded": float(sum(x["net_return_pct"] for x in items if x.get("net_return_pct") is not None)),
+CONTEXT BEFORE:
+                "mean_fold_net_return_pct": float(np.mean([x["net_return_pct"] for x in items if x.get("net_return_pct") is not None])) if any(x.get("net_return_pct") is not None for x in items) else None,
+                "mean_fold_benchmark_return_pct": float(np.mean([x["gross_benchmark_return_pct"] for x in items if x.get("gross_benchmark_return_pct") is not None])) if any(x.get("gross_benchmark_return_pct") is not None for x in items) else None,
+                "mean_fold_max_drawdown": float(np.mean([x["max_drawdown"] for x in items if x.get("max_drawdown") is not None])) if any(x.get("max_drawdown") is not None for x in items) else None,
+CONTEXT AFTER:
+                "test_trades": int(sum(x["trades"] for x in items)),
+            })
+    comparison.sort(key=lambda x:(x["mean_brier_score"],-x["mean_accuracy"]))
+    sequence_status={kind:("trained_and_evaluated_on_chronological_folds" if values else ("installed_but_insufficient_data_or_training_failed" if torch_available else "skipped: install torch in a separate research environment")) for kind,values in sequence_scores.items()}
+    gate={"authorized":False,"reason":"Research endpoint never enables demo trading. Gate implementation requires positive net performance across at least 3 folds, calibrated probability error thresholds, adequate trade count and persistent outcome monitoring.","required_checks":{"minimum_folds":3,"minimum_trades":30,"maximum_mean_brier_score":0.24,"maximum_mean_ece":0.10,"positive_net_return_after_assumed_costs":True}}
+----------------------------------------

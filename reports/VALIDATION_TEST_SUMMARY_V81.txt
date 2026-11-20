@@ -1,0 +1,10 @@
+BharatStock AI V81 validation summary
+
+CSV evidence audit: PASSED (all four holdout prediction CSVs validated and recomputed metrics matched a row in the supplied metrics CSV).
+Focused model-evaluation/backtest tests: 5 passed.
+Full backend test suite: 99 passed, 16 warnings (existing pandas/SQLAlchemy datetime deprecation/future warnings).
+Python compile check: passed.
+
+Not performed: live Upstox retrieval (requires user's local credentials), real-token end-to-end evaluation, or independent reproduction of the original daily backtest summary (price-aligned trade ledger/close prices were not included in the uploaded evidence).
+
+No claim of profitability or full project completion is made.

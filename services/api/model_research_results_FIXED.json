@@ -1,0 +1,1654 @@
+{
+  "target": "next-session close direction",
+  "feature_sets": {
+    "base_8": {
+      "features": [
+        "RSI",
+        "MACD_pct",
+        "MACD_Signal_pct",
+        "SMA20_gap",
+        "SMA50_gap",
+        "EMA20_gap",
+        "ATR_pct",
+        "Return_5"
+      ],
+      "evaluation": {
+        "status": "completed",
+        "rows": 1184,
+        "folds": [
+          {
+            "fold": 1,
+            "train_rows": 591,
+            "test_rows": 119,
+            "baseline_accuracy": 0.5210084033613446,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 180,
+                  "max_depth": 6,
+                  "min_samples_leaf": 8
+                },
+                "inner_mean_balanced_accuracy": 0.47205221492455535
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 80,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 5,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.4784251445953573
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.5378151260504201,
+              "balanced_accuracy": 0.5323995472552349,
+              "f1": 0.5985401459854015,
+              "brier": 0.24899632799008478,
+              "log_loss": 0.6911356679669752
+            },
+            "RandomForest": {
+              "accuracy": 0.5042016806722689,
+              "balanced_accuracy": 0.5022637238256933,
+              "f1": 0.5354330708661418,
+              "brier": 0.24901323204657902,
+              "log_loss": 0.690807766360129
+            },
+            "ExtraTrees": {
+              "accuracy": 0.4957983193277311,
+              "balanced_accuracy": 0.49349179400113186,
+              "f1": 0.53125,
+              "brier": 0.24877170486477249,
+              "log_loss": 0.6906705858836858
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.5042016806722689,
+              "balanced_accuracy": 0.5022637238256933,
+              "f1": 0.5354330708661418,
+              "brier": 0.26546641272795835,
+              "log_loss": 0.7261090673909116
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5042016806722689,
+              "balanced_accuracy": 0.5022637238256933,
+              "f1": 0.5354330708661418,
+              "brier": 0.24901323204657902,
+              "log_loss": 0.690807766360129
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5126050420168067,
+              "balanced_accuracy": 0.5103282399547255,
+              "f1": 0.546875,
+              "brier": 0.24894418374983912,
+              "log_loss": 0.6909594779965836
+            }
+          },
+          {
+            "fold": 2,
+            "train_rows": 710,
+            "test_rows": 119,
+            "baseline_accuracy": 0.5042016806722689,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.46557983007834053
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 80,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 5,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.48010923535253225
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.48739495798319327,
+              "balanced_accuracy": 0.48615819209039546,
+              "f1": 0.5547445255474452,
+              "brier": 0.24899690850532297,
+              "log_loss": 0.6911343374496848
+            },
+            "RandomForest": {
+              "accuracy": 0.42857142857142855,
+              "balanced_accuracy": 0.4296610169491525,
+              "f1": 0.34615384615384615,
+              "brier": 0.2611794239536616,
+              "log_loss": 0.715845210844524
+            },
+            "ExtraTrees": {
+              "accuracy": 0.48739495798319327,
+              "balanced_accuracy": 0.488135593220339,
+              "f1": 0.44036697247706424,
+              "brier": 0.2514335447425637,
+              "log_loss": 0.696019087360912
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.47058823529411764,
+              "balanced_accuracy": 0.4703389830508474,
+              "f1": 0.4878048780487805,
+              "brier": 0.2673890052475141,
+              "log_loss": 0.7297733222526455
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.47058823529411764,
+              "balanced_accuracy": 0.4713276836158192,
+              "f1": 0.42201834862385323,
+              "brier": 0.25608321685204344,
+              "log_loss": 0.705421979296134
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.4789915966386555,
+              "balanced_accuracy": 0.4795197740112994,
+              "f1": 0.44642857142857145,
+              "brier": 0.2576793433699823,
+              "log_loss": 0.7089002998975179
+            }
+          },
+          {
+            "fold": 3,
+            "train_rows": 829,
+            "test_rows": 118,
+            "baseline_accuracy": 0.5084745762711864,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 220,
+                  "max_depth": 8,
+                  "min_samples_leaf": 12
+                },
+                "inner_mean_balanced_accuracy": 0.48544578655807474
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 160,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 9,
+                  "l2_regularization": 4.0
+                },
+                "inner_mean_balanced_accuracy": 0.5029881900114951
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.48017241379310344,
+              "f1": 0.225,
+              "brier": 0.24979399024709859,
+              "log_loss": 0.6927275263157197
+            },
+            "RandomForest": {
+              "accuracy": 0.4915254237288136,
+              "balanced_accuracy": 0.4925287356321839,
+              "f1": 0.4642857142857143,
+              "brier": 0.2544018224102074,
+              "log_loss": 0.7020809651741988
+            },
+            "ExtraTrees": {
+              "accuracy": 0.423728813559322,
+              "balanced_accuracy": 0.42614942528735633,
+              "f1": 0.3333333333333333,
+              "brier": 0.25249552542579357,
+              "log_loss": 0.6981441160124948
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.47327586206896555,
+              "f1": 0.515625,
+              "brier": 0.2659476249926763,
+              "log_loss": 0.7266948727688499
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.4322033898305085,
+              "balanced_accuracy": 0.43247126436781613,
+              "f1": 0.42735042735042733,
+              "brier": 0.2590252130236348,
+              "log_loss": 0.7115900096916979
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.4491525423728814,
+              "balanced_accuracy": 0.4474137931034483,
+              "f1": 0.5038167938931297,
+              "brier": 0.2669257893911656,
+              "log_loss": 0.7290919367612536
+            }
+          },
+          {
+            "fold": 4,
+            "train_rows": 947,
+            "test_rows": 118,
+            "baseline_accuracy": 0.4661016949152542,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.47669053685002316
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 80,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 5,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.5111299057964344
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.4915254237288136,
+              "balanced_accuracy": 0.49956709956709955,
+              "f1": 0.53125,
+              "brier": 0.25001292148386467,
+              "log_loss": 0.6931795771855594
+            },
+            "RandomForest": {
+              "accuracy": 0.5338983050847458,
+              "balanced_accuracy": 0.5473304473304473,
+              "f1": 0.5985401459854015,
+              "brier": 0.2605639471984871,
+              "log_loss": 0.7186735955091488
+            },
+            "ExtraTrees": {
+              "accuracy": 0.4830508474576271,
+              "balanced_accuracy": 0.4950937950937951,
+              "f1": 0.5481481481481482,
+              "brier": 0.25129580416653696,
+              "log_loss": 0.6958205686151725
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.4491525423728814,
+              "balanced_accuracy": 0.4645021645021645,
+              "f1": 0.5390070921985816,
+              "brier": 0.2755898658599652,
+              "log_loss": 0.7511522622628292
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5508474576271186,
+              "balanced_accuracy": 0.5643578643578644,
+              "f1": 0.6131386861313869,
+              "brier": 0.2577927821619594,
+              "log_loss": 0.7108620832132284
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.4883116883116883,
+              "f1": 0.5507246376811594,
+              "brier": 0.26187547116954374,
+              "log_loss": 0.7189973276979458
+            }
+          },
+          {
+            "fold": 5,
+            "train_rows": 1065,
+            "test_rows": 118,
+            "baseline_accuracy": 0.4830508474576271,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.49204306806538584
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 80,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 5,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.5044558086552767
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.47972389991371867,
+              "f1": 0.5373134328358209,
+              "brier": 0.24857545492466115,
+              "log_loss": 0.6902490768805672
+            },
+            "RandomForest": {
+              "accuracy": 0.5423728813559322,
+              "balanced_accuracy": 0.54127121081392,
+              "f1": 0.5178571428571429,
+              "brier": 0.24605316825014953,
+              "log_loss": 0.6851277603562442
+            },
+            "ExtraTrees": {
+              "accuracy": 0.5338983050847458,
+              "balanced_accuracy": 0.5307736554501007,
+              "f1": 0.47619047619047616,
+              "brier": 0.24755231495807278,
+              "log_loss": 0.6882341651292045
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.559322033898305,
+              "balanced_accuracy": 0.5582398619499569,
+              "f1": 0.5357142857142857,
+              "brier": 0.2411827395095321,
+              "log_loss": 0.6747094095080041
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5338983050847458,
+              "balanced_accuracy": 0.5319240724762726,
+              "f1": 0.4954128440366973,
+              "brier": 0.24682478717207132,
+              "log_loss": 0.6867416226792257
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5254237288135594,
+              "balanced_accuracy": 0.5225769341386253,
+              "f1": 0.4716981132075472,
+              "brier": 0.24724176584685564,
+              "log_loss": 0.6874864921893017
+            }
+          }
+        ],
+        "summary": {
+          "baseline_accuracy": {
+            "mean_accuracy": 0.49656744053553625,
+            "fold_std": 0.021841944237971107
+          },
+          "LogisticRegression": {
+            "mean_accuracy": 0.4931776100270617,
+            "fold_std": 0.02608014682803448,
+            "mean_balanced_accuracy": 0.49560423052391045,
+            "mean_f1": 0.48936962087373354,
+            "mean_brier": 0.24927512063020646,
+            "mean_log_loss": 0.6916852371597013
+          },
+          "RandomForest": {
+            "mean_accuracy": 0.5001139438826379,
+            "fold_std": 0.045099901955976754,
+            "mean_balanced_accuracy": 0.5026110269102795,
+            "mean_f1": 0.4924539840296493,
+            "mean_brier": 0.2542423187718169,
+            "mean_log_loss": 0.702507059648849
+          },
+          "ExtraTrees": {
+            "mean_accuracy": 0.4847742486825239,
+            "fold_std": 0.0395950957487188,
+            "mean_balanced_accuracy": 0.48672885261054455,
+            "mean_f1": 0.4658577860298044,
+            "mean_brier": 0.2503097788315479,
+            "mean_log_loss": 0.693777704600294
+          },
+          "HistGradientBoosting": {
+            "mean_accuracy": 0.4915681526848027,
+            "fold_std": 0.04265606468490322,
+            "mean_balanced_accuracy": 0.4937241190795255,
+            "mean_f1": 0.5227168653655578,
+            "mean_brier": 0.2631151296675292,
+            "mean_log_loss": 0.721687786836648
+          },
+          "TunedRandomForest": {
+            "mean_accuracy": 0.4983478137017519,
+            "fold_std": 0.047958306921219176,
+            "mean_balanced_accuracy": 0.5004689217286931,
+            "mean_f1": 0.4986706754017013,
+            "mean_brier": 0.25374784625125757,
+            "mean_log_loss": 0.7010846922480829
+          },
+          "TunedHistGradientBoosting": {
+            "mean_accuracy": 0.48814983620566876,
+            "fold_std": 0.030725820196491303,
+            "mean_balanced_accuracy": 0.4896300859039574,
+            "mean_f1": 0.5039086232420816,
+            "mean_brier": 0.2565333107054773,
+            "mean_log_loss": 0.7070871069085205
+          }
+        },
+        "method": "expanding-window walk-forward; chronological; one-row target-boundary purge; identical folds across feature sets; no random shuffle"
+      }
+    },
+    "expanded_16": {
+      "features": [
+        "RSI",
+        "MACD_pct",
+        "MACD_Signal_pct",
+        "SMA20_gap",
+        "SMA50_gap",
+        "EMA20_gap",
+        "ATR_pct",
+        "Return_5",
+        "Return_1",
+        "Return_10",
+        "Return_20",
+        "Volatility_5",
+        "Range_pct",
+        "Close_Location",
+        "Gap_pct",
+        "Volume_Ratio_20"
+      ],
+      "evaluation": {
+        "status": "completed",
+        "rows": 1184,
+        "folds": [
+          {
+            "fold": 1,
+            "train_rows": 591,
+            "test_rows": 119,
+            "baseline_accuracy": 0.5210084033613446,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 180,
+                  "max_depth": 6,
+                  "min_samples_leaf": 8
+                },
+                "inner_mean_balanced_accuracy": 0.4971359255401809
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 120,
+                  "learning_rate": 0.04,
+                  "max_leaf_nodes": 7,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.4892070459091736
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.5042016806722689,
+              "balanced_accuracy": 0.5008488964346349,
+              "f1": 0.549618320610687,
+              "brier": 0.2504341682028919,
+              "log_loss": 0.6939468188030355
+            },
+            "RandomForest": {
+              "accuracy": 0.5126050420168067,
+              "balanced_accuracy": 0.5089134125636672,
+              "f1": 0.5606060606060606,
+              "brier": 0.2467964115648024,
+              "log_loss": 0.6865431172705158
+            },
+            "ExtraTrees": {
+              "accuracy": 0.5294117647058824,
+              "balanced_accuracy": 0.5271646859083192,
+              "f1": 0.5625,
+              "brier": 0.2469189515335008,
+              "log_loss": 0.6869448484398812
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.5462184873949579,
+              "balanced_accuracy": 0.5425863044708545,
+              "f1": 0.5909090909090909,
+              "brier": 0.255219975605686,
+              "log_loss": 0.7049929931544352
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5126050420168067,
+              "balanced_accuracy": 0.5089134125636672,
+              "f1": 0.5606060606060606,
+              "brier": 0.24679641156480236,
+              "log_loss": 0.6865431172705156
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5462184873949579,
+              "balanced_accuracy": 0.5425863044708545,
+              "f1": 0.5909090909090909,
+              "brier": 0.255219975605686,
+              "log_loss": 0.7049929931544352
+            }
+          },
+          {
+            "fold": 2,
+            "train_rows": 710,
+            "test_rows": 119,
+            "baseline_accuracy": 0.5042016806722689,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.5137217256978924
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 80,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 5,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.558054728015006
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.5126050420168067,
+              "balanced_accuracy": 0.5120056497175142,
+              "f1": 0.546875,
+              "brier": 0.25311629749191666,
+              "log_loss": 0.699525739453497
+            },
+            "RandomForest": {
+              "accuracy": 0.5126050420168067,
+              "balanced_accuracy": 0.513135593220339,
+              "f1": 0.48214285714285715,
+              "brier": 0.25046389480029196,
+              "log_loss": 0.6941599010708462
+            },
+            "ExtraTrees": {
+              "accuracy": 0.4789915966386555,
+              "balanced_accuracy": 0.47980225988700564,
+              "f1": 0.42592592592592593,
+              "brier": 0.2508454731546141,
+              "log_loss": 0.6948467800054137
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.5126050420168067,
+              "balanced_accuracy": 0.5132768361581921,
+              "f1": 0.4727272727272727,
+              "brier": 0.26549287586705833,
+              "log_loss": 0.725784472623207
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5042016806722689,
+              "balanced_accuracy": 0.5049435028248588,
+              "f1": 0.45871559633027525,
+              "brier": 0.24821129616812998,
+              "log_loss": 0.6895742379418728
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.4957983193277311,
+              "balanced_accuracy": 0.49618644067796613,
+              "f1": 0.47368421052631576,
+              "brier": 0.2529661059634147,
+              "log_loss": 0.6991987508223196
+            }
+          },
+          {
+            "fold": 3,
+            "train_rows": 829,
+            "test_rows": 118,
+            "baseline_accuracy": 0.5084745762711864,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 220,
+                  "max_depth": 8,
+                  "min_samples_leaf": 12
+                },
+                "inner_mean_balanced_accuracy": 0.5177952726416709
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 160,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 9,
+                  "l2_regularization": 4.0
+                },
+                "inner_mean_balanced_accuracy": 0.5596961595372612
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.4661016949152542,
+              "balanced_accuracy": 0.4704022988505747,
+              "f1": 0.29213483146067415,
+              "brier": 0.25207555810921095,
+              "log_loss": 0.6973147712485372
+            },
+            "RandomForest": {
+              "accuracy": 0.4576271186440678,
+              "balanced_accuracy": 0.4568965517241379,
+              "f1": 0.4838709677419355,
+              "brier": 0.26192552962323745,
+              "log_loss": 0.7173464339783545
+            },
+            "ExtraTrees": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.4755747126436781,
+              "f1": 0.44642857142857145,
+              "brier": 0.2528886633587766,
+              "log_loss": 0.6989375730806971
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.4830508474576271,
+              "balanced_accuracy": 0.48333333333333334,
+              "f1": 0.47863247863247865,
+              "brier": 0.267969817721907,
+              "log_loss": 0.7304287981303824
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.4915254237288136,
+              "balanced_accuracy": 0.49051724137931035,
+              "f1": 0.5238095238095238,
+              "brier": 0.2615058992634088,
+              "log_loss": 0.7166335310835635
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.4491525423728814,
+              "balanced_accuracy": 0.4482758620689655,
+              "f1": 0.48,
+              "brier": 0.2672515615218855,
+              "log_loss": 0.7289616946027296
+            }
+          },
+          {
+            "fold": 4,
+            "train_rows": 947,
+            "test_rows": 118,
+            "baseline_accuracy": 0.4661016949152542,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.5019837996950673
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 80,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 5,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.5124732733680538
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.5338983050847458,
+              "balanced_accuracy": 0.5346320346320346,
+              "f1": 0.5217391304347826,
+              "brier": 0.24762815917558398,
+              "log_loss": 0.6881725000960957
+            },
+            "RandomForest": {
+              "accuracy": 0.5084745762711864,
+              "balanced_accuracy": 0.5154401154401154,
+              "f1": 0.5396825396825397,
+              "brier": 0.2594827826099544,
+              "log_loss": 0.7132643140248096
+            },
+            "ExtraTrees": {
+              "accuracy": 0.5084745762711864,
+              "balanced_accuracy": 0.5165945165945166,
+              "f1": 0.546875,
+              "brier": 0.25265134859110194,
+              "log_loss": 0.6985553899067093
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.4576271186440678,
+              "balanced_accuracy": 0.46897546897546893,
+              "f1": 0.5223880597014925,
+              "brier": 0.26752955840582343,
+              "log_loss": 0.7309343357831916
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5084745762711864,
+              "balanced_accuracy": 0.5165945165945166,
+              "f1": 0.546875,
+              "brier": 0.25561896154535857,
+              "log_loss": 0.7049722219256395
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.4883116883116883,
+              "f1": 0.5507246376811594,
+              "brier": 0.25984462534725355,
+              "log_loss": 0.7135897424978623
+            }
+          },
+          {
+            "fold": 5,
+            "train_rows": 1065,
+            "test_rows": 118,
+            "baseline_accuracy": 0.4830508474576271,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 220,
+                  "max_depth": 8,
+                  "min_samples_leaf": 12
+                },
+                "inner_mean_balanced_accuracy": 0.5164484990103252
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 160,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 9,
+                  "l2_regularization": 4.0
+                },
+                "inner_mean_balanced_accuracy": 0.51686575415638
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.6101694915254238,
+              "balanced_accuracy": 0.6137474834627552,
+              "f1": 0.640625,
+              "brier": 0.24131743370797143,
+              "log_loss": 0.6753153085073409
+            },
+            "RandomForest": {
+              "accuracy": 0.6271186440677966,
+              "balanced_accuracy": 0.6278400920333621,
+              "f1": 0.6271186440677966,
+              "brier": 0.24161121583775835,
+              "log_loss": 0.6763334687296978
+            },
+            "ExtraTrees": {
+              "accuracy": 0.6101694915254238,
+              "balanced_accuracy": 0.6091458153580673,
+              "f1": 0.5892857142857143,
+              "brier": 0.24389699397884385,
+              "log_loss": 0.6808923458637737
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.5932203389830508,
+              "balanced_accuracy": 0.5927523727351165,
+              "f1": 0.5789473684210527,
+              "brier": 0.23621646525434617,
+              "log_loss": 0.6652080909157783
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.6016949152542372,
+              "balanced_accuracy": 0.6015243025596779,
+              "f1": 0.591304347826087,
+              "brier": 0.2389289198521613,
+              "log_loss": 0.6708631033184381
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.6016949152542372,
+              "balanced_accuracy": 0.6015243025596779,
+              "f1": 0.591304347826087,
+              "brier": 0.23884970779452236,
+              "log_loss": 0.6707622125740826
+            }
+          }
+        ],
+        "summary": {
+          "baseline_accuracy": {
+            "mean_accuracy": 0.49656744053553625,
+            "fold_std": 0.021841944237971107
+          },
+          "LogisticRegression": {
+            "mean_accuracy": 0.5253952428428998,
+            "fold_std": 0.05335601289375762,
+            "mean_balanced_accuracy": 0.5263272726195027,
+            "mean_f1": 0.5101984565012287,
+            "mean_brier": 0.24891432333751498,
+            "mean_log_loss": 0.6908550276217014
+          },
+          "RandomForest": {
+            "mean_accuracy": 0.5236860846033329,
+            "fold_std": 0.06232786362519765,
+            "mean_balanced_accuracy": 0.5244451529963243,
+            "mean_f1": 0.538684213848238,
+            "mean_brier": 0.25205596688720894,
+            "mean_log_loss": 0.6975294470148448
+          },
+          "ExtraTrees": {
+            "mean_accuracy": 0.5203247400655178,
+            "fold_std": 0.05499188784262823,
+            "mean_balanced_accuracy": 0.5216563980783174,
+            "mean_f1": 0.5142030423280424,
+            "mean_brier": 0.2494402861233674,
+            "mean_log_loss": 0.692035387459295
+          },
+          "HistGradientBoosting": {
+            "mean_accuracy": 0.5185443668993021,
+            "fold_std": 0.05326428068900193,
+            "mean_balanced_accuracy": 0.5201848631345931,
+            "mean_f1": 0.5287208540782775,
+            "mean_brier": 0.2584857385709642,
+            "mean_log_loss": 0.7114697381213989
+          },
+          "TunedRandomForest": {
+            "mean_accuracy": 0.5237003275886625,
+            "fold_std": 0.044310005191227374,
+            "mean_balanced_accuracy": 0.5244985951844061,
+            "mean_f1": 0.5362621057143893,
+            "mean_brier": 0.25021229767877223,
+            "mean_log_loss": 0.6937172423080058
+          },
+          "TunedHistGradientBoosting": {
+            "mean_accuracy": 0.5134881071072497,
+            "fold_std": 0.06086428191755804,
+            "mean_balanced_accuracy": 0.5153769196178304,
+            "mean_f1": 0.5373244573885307,
+            "mean_brier": 0.25482639524655243,
+            "mean_log_loss": 0.7035010787302859
+          }
+        },
+        "method": "expanding-window walk-forward; chronological; one-row target-boundary purge; identical folds across feature sets; no random shuffle"
+      }
+    },
+    "momentum_volatility": {
+      "features": [
+        "RSI",
+        "Return_1",
+        "Return_5",
+        "Return_10",
+        "Return_20",
+        "Volatility_5",
+        "ATR_pct"
+      ],
+      "evaluation": {
+        "status": "completed",
+        "rows": 1184,
+        "folds": [
+          {
+            "fold": 1,
+            "train_rows": 591,
+            "test_rows": 119,
+            "baseline_accuracy": 0.5210084033613446,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 220,
+                  "max_depth": 8,
+                  "min_samples_leaf": 12
+                },
+                "inner_mean_balanced_accuracy": 0.486860893243872
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 120,
+                  "learning_rate": 0.04,
+                  "max_leaf_nodes": 7,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.4794383158212945
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.44537815126050423,
+              "balanced_accuracy": 0.4500565930956423,
+              "f1": 0.3888888888888889,
+              "brier": 0.25094350046320896,
+              "log_loss": 0.6950272331303994
+            },
+            "RandomForest": {
+              "accuracy": 0.4957983193277311,
+              "balanced_accuracy": 0.4991511035653651,
+              "f1": 0.4642857142857143,
+              "brier": 0.25091363453812,
+              "log_loss": 0.6950892677055441
+            },
+            "ExtraTrees": {
+              "accuracy": 0.5294117647058824,
+              "balanced_accuracy": 0.5321165817770231,
+              "f1": 0.5087719298245614,
+              "brier": 0.24905010632580038,
+              "log_loss": 0.6912454305475787
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.5378151260504201,
+              "balanced_accuracy": 0.5415959252971138,
+              "f1": 0.5045045045045045,
+              "brier": 0.2604041238055084,
+              "log_loss": 0.7182529609933994
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5210084033613446,
+              "balanced_accuracy": 0.5226372382569326,
+              "f1": 0.5128205128205128,
+              "brier": 0.2510294897776868,
+              "log_loss": 0.6953899200494871
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5378151260504201,
+              "balanced_accuracy": 0.5415959252971138,
+              "f1": 0.5045045045045045,
+              "brier": 0.2604041238055084,
+              "log_loss": 0.7182529609933994
+            }
+          },
+          {
+            "fold": 2,
+            "train_rows": 710,
+            "test_rows": 119,
+            "baseline_accuracy": 0.5042016806722689,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 220,
+                  "max_depth": 8,
+                  "min_samples_leaf": 12
+                },
+                "inner_mean_balanced_accuracy": 0.4877700540659826
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 160,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 9,
+                  "l2_regularization": 4.0
+                },
+                "inner_mean_balanced_accuracy": 0.5192188017212843
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.5966386554621849,
+              "balanced_accuracy": 0.5964689265536723,
+              "f1": 0.6065573770491803,
+              "brier": 0.24693049754587001,
+              "log_loss": 0.6869903175655043
+            },
+            "RandomForest": {
+              "accuracy": 0.47058823529411764,
+              "balanced_accuracy": 0.4716101694915254,
+              "f1": 0.4,
+              "brier": 0.2521370558610471,
+              "log_loss": 0.6974828771166471
+            },
+            "ExtraTrees": {
+              "accuracy": 0.5378151260504201,
+              "balanced_accuracy": 0.5392655367231638,
+              "f1": 0.4444444444444444,
+              "brier": 0.24901046394854282,
+              "log_loss": 0.6911631074741269
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.5378151260504201,
+              "balanced_accuracy": 0.5378531073446328,
+              "f1": 0.5378151260504201,
+              "brier": 0.25346772841323056,
+              "log_loss": 0.700861754847264
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5210084033613446,
+              "balanced_accuracy": 0.5217514124293785,
+              "f1": 0.47706422018348627,
+              "brier": 0.2491049428681557,
+              "log_loss": 0.6913037867668934
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5126050420168067,
+              "balanced_accuracy": 0.5129943502824859,
+              "f1": 0.49122807017543857,
+              "brier": 0.2549342767636662,
+              "log_loss": 0.70399523886692
+            }
+          },
+          {
+            "fold": 3,
+            "train_rows": 829,
+            "test_rows": 118,
+            "baseline_accuracy": 0.5084745762711864,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 220,
+                  "max_depth": 8,
+                  "min_samples_leaf": 12
+                },
+                "inner_mean_balanced_accuracy": 0.5237778817227969
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 160,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 9,
+                  "l2_regularization": 4.0
+                },
+                "inner_mean_balanced_accuracy": 0.5440664972974295
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.4830508474576271,
+              "balanced_accuracy": 0.4873563218390805,
+              "f1": 0.3146067415730337,
+              "brier": 0.25194215593260044,
+              "log_loss": 0.6970379093956098
+            },
+            "RandomForest": {
+              "accuracy": 0.5,
+              "balanced_accuracy": 0.4982758620689655,
+              "f1": 0.549618320610687,
+              "brier": 0.2521876536761275,
+              "log_loss": 0.6976334346750355
+            },
+            "ExtraTrees": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.4755747126436781,
+              "f1": 0.44642857142857145,
+              "brier": 0.2522304968242874,
+              "log_loss": 0.6976126475136905
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.4576271186440678,
+              "balanced_accuracy": 0.45632183908045976,
+              "f1": 0.5,
+              "brier": 0.2622388125953028,
+              "log_loss": 0.7179841144228067
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.47327586206896555,
+              "f1": 0.515625,
+              "brier": 0.2536702461782466,
+              "log_loss": 0.7005720790424669
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5254237288135594,
+              "balanced_accuracy": 0.525,
+              "f1": 0.5409836065573771,
+              "brier": 0.26134895364224814,
+              "log_loss": 0.7162918446051354
+            }
+          },
+          {
+            "fold": 4,
+            "train_rows": 947,
+            "test_rows": 118,
+            "baseline_accuracy": 0.4661016949152542,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.5126231228861717
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 80,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 5,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.5159050961246487
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.5508474576271186,
+              "balanced_accuracy": 0.553968253968254,
+              "f1": 0.5546218487394958,
+              "brier": 0.24905966289424541,
+              "log_loss": 0.6912695448046011
+            },
+            "RandomForest": {
+              "accuracy": 0.5423728813559322,
+              "balanced_accuracy": 0.5541125541125541,
+              "f1": 0.5970149253731343,
+              "brier": 0.261588700743471,
+              "log_loss": 0.7178288170535624
+            },
+            "ExtraTrees": {
+              "accuracy": 0.5338983050847458,
+              "balanced_accuracy": 0.5461760461760462,
+              "f1": 0.5925925925925926,
+              "brier": 0.25059113561585294,
+              "log_loss": 0.6943382637934674
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.5254237288135594,
+              "balanced_accuracy": 0.537085137085137,
+              "f1": 0.582089552238806,
+              "brier": 0.27504954825107275,
+              "log_loss": 0.7488097187874201
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5254237288135594,
+              "balanced_accuracy": 0.5393939393939394,
+              "f1": 0.5942028985507246,
+              "brier": 0.2567176106472913,
+              "log_loss": 0.7072991386114648
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.49177489177489175,
+              "f1": 0.5694444444444444,
+              "brier": 0.2610536122152555,
+              "log_loss": 0.7163741804592059
+            }
+          },
+          {
+            "fold": 5,
+            "train_rows": 1065,
+            "test_rows": 118,
+            "baseline_accuracy": 0.4830508474576271,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.5290174531961964
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 80,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 5,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.5133791799311388
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.47742306586137473,
+              "f1": 0.5079365079365079,
+              "brier": 0.25157438447489616,
+              "log_loss": 0.6963010375574002
+            },
+            "RandomForest": {
+              "accuracy": 0.5169491525423728,
+              "balanced_accuracy": 0.5161058383664079,
+              "f1": 0.49557522123893805,
+              "brier": 0.2482038061388144,
+              "log_loss": 0.689624726005877
+            },
+            "ExtraTrees": {
+              "accuracy": 0.5338983050847458,
+              "balanced_accuracy": 0.5319240724762726,
+              "f1": 0.4954128440366973,
+              "brier": 0.24851913692129488,
+              "log_loss": 0.6901798218204598
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.4915254237288136,
+              "balanced_accuracy": 0.4915156744319816,
+              "f1": 0.4827586206896552,
+              "brier": 0.25619185157232216,
+              "log_loss": 0.7059287095413854
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5,
+              "balanced_accuracy": 0.499712395743457,
+              "f1": 0.48695652173913045,
+              "brier": 0.2509172019439377,
+              "log_loss": 0.6950547136595342
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.4830508474576271,
+              "balanced_accuracy": 0.4810181190681622,
+              "f1": 0.44036697247706424,
+              "brier": 0.25329806634817004,
+              "log_loss": 0.6998536909885477
+            }
+          }
+        ],
+        "summary": {
+          "baseline_accuracy": {
+            "mean_accuracy": 0.49656744053553625,
+            "fold_std": 0.021841944237971107
+          },
+          "LogisticRegression": {
+            "mean_accuracy": 0.5100982765987752,
+            "fold_std": 0.061910830724042215,
+            "mean_balanced_accuracy": 0.5130546322636048,
+            "mean_f1": 0.47452227283742127,
+            "mean_brier": 0.2500900402621642,
+            "mean_log_loss": 0.693325208490703
+          },
+          "RandomForest": {
+            "mean_accuracy": 0.5051417177040307,
+            "fold_std": 0.026614162419446526,
+            "mean_balanced_accuracy": 0.5078511055209636,
+            "mean_f1": 0.5012988363016947,
+            "mean_brier": 0.253006170191516,
+            "mean_log_loss": 0.6995318245113332
+          },
+          "ExtraTrees": {
+            "mean_accuracy": 0.521919954422447,
+            "fold_std": 0.026632545005758474,
+            "mean_balanced_accuracy": 0.5250113899592368,
+            "mean_f1": 0.4975300764653734,
+            "mean_brier": 0.24988026792715567,
+            "mean_log_loss": 0.6929078542298647
+          },
+          "HistGradientBoosting": {
+            "mean_accuracy": 0.5100413046574561,
+            "fold_std": 0.03489080833279928,
+            "mean_balanced_accuracy": 0.512874336647865,
+            "mean_f1": 0.5214335606966772,
+            "mean_brier": 0.2614704129274873,
+            "mean_log_loss": 0.7183674517184552
+          },
+          "TunedRandomForest": {
+            "mean_accuracy": 0.5084033613445379,
+            "fold_std": 0.02134452850101378,
+            "mean_balanced_accuracy": 0.5113541695785346,
+            "mean_f1": 0.5173338306587707,
+            "mean_brier": 0.2522878982830636,
+            "mean_log_loss": 0.6979239276259692
+          },
+          "TunedHistGradientBoosting": {
+            "mean_accuracy": 0.5066942031049708,
+            "fold_std": 0.02713307396830049,
+            "mean_balanced_accuracy": 0.5104766572845307,
+            "mean_f1": 0.5093055196317657,
+            "mean_brier": 0.25820780655496967,
+            "mean_log_loss": 0.7109535831826417
+          }
+        },
+        "method": "expanding-window walk-forward; chronological; one-row target-boundary purge; identical folds across feature sets; no random shuffle"
+      }
+    },
+    "trend_only": {
+      "features": [
+        "MACD_pct",
+        "MACD_Signal_pct",
+        "SMA20_gap",
+        "SMA50_gap",
+        "EMA20_gap"
+      ],
+      "evaluation": {
+        "status": "completed",
+        "rows": 1184,
+        "folds": [
+          {
+            "fold": 1,
+            "train_rows": 591,
+            "test_rows": 119,
+            "baseline_accuracy": 0.5210084033613446,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 180,
+                  "max_depth": 6,
+                  "min_samples_leaf": 8
+                },
+                "inner_mean_balanced_accuracy": 0.49411510475340265
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 120,
+                  "learning_rate": 0.04,
+                  "max_leaf_nodes": 7,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.4904844918674707
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.5714285714285714,
+              "balanced_accuracy": 0.5646576117713639,
+              "f1": 0.6382978723404256,
+              "brier": 0.24871165912227167,
+              "log_loss": 0.690570592501806
+            },
+            "RandomForest": {
+              "accuracy": 0.44537815126050423,
+              "balanced_accuracy": 0.4380305602716469,
+              "f1": 0.5352112676056338,
+              "brier": 0.25335094807690006,
+              "log_loss": 0.6996474068102405
+            },
+            "ExtraTrees": {
+              "accuracy": 0.5294117647058824,
+              "balanced_accuracy": 0.5243350311262026,
+              "f1": 0.5882352941176471,
+              "brier": 0.24875945918678224,
+              "log_loss": 0.6906566612436376
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.5210084033613446,
+              "balanced_accuracy": 0.5120260328239955,
+              "f1": 0.6122448979591837,
+              "brier": 0.2578914609450626,
+              "log_loss": 0.7092972566653487
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.44537815126050423,
+              "balanced_accuracy": 0.4380305602716469,
+              "f1": 0.5352112676056338,
+              "brier": 0.2533509480769,
+              "log_loss": 0.6996474068102405
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5210084033613446,
+              "balanced_accuracy": 0.5120260328239955,
+              "f1": 0.6122448979591837,
+              "brier": 0.2578914609450626,
+              "log_loss": 0.7092972566653487
+            }
+          },
+          {
+            "fold": 2,
+            "train_rows": 710,
+            "test_rows": 119,
+            "baseline_accuracy": 0.5042016806722689,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 220,
+                  "max_depth": 8,
+                  "min_samples_leaf": 12
+                },
+                "inner_mean_balanced_accuracy": 0.47935120820920224
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 160,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 9,
+                  "l2_regularization": 4.0
+                },
+                "inner_mean_balanced_accuracy": 0.4811111111111111
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.48739495798319327,
+              "balanced_accuracy": 0.4864406779661017,
+              "f1": 0.5413533834586466,
+              "brier": 0.2505177240915569,
+              "log_loss": 0.6941968889193044
+            },
+            "RandomForest": {
+              "accuracy": 0.453781512605042,
+              "balanced_accuracy": 0.4543785310734464,
+              "f1": 0.4144144144144144,
+              "brier": 0.2561872643936809,
+              "log_loss": 0.7055558331283218
+            },
+            "ExtraTrees": {
+              "accuracy": 0.5042016806722689,
+              "balanced_accuracy": 0.5048022598870057,
+              "f1": 0.46846846846846846,
+              "brier": 0.2510000424170327,
+              "log_loss": 0.6951568024804335
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.48739495798319327,
+              "balanced_accuracy": 0.4874293785310735,
+              "f1": 0.48739495798319327,
+              "brier": 0.2647544206325686,
+              "log_loss": 0.7240098681759487
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.47058823529411764,
+              "balanced_accuracy": 0.4713276836158192,
+              "f1": 0.42201834862385323,
+              "brier": 0.26157244131174506,
+              "log_loss": 0.7169066843922013
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5378151260504201,
+              "balanced_accuracy": 0.5378531073446328,
+              "f1": 0.5378151260504201,
+              "brier": 0.2664830263939907,
+              "log_loss": 0.7281816022120353
+            }
+          },
+          {
+            "fold": 3,
+            "train_rows": 829,
+            "test_rows": 118,
+            "baseline_accuracy": 0.5084745762711864,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.4697835268545014
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 160,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 9,
+                  "l2_regularization": 4.0
+                },
+                "inner_mean_balanced_accuracy": 0.4975102492846137
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.576271186440678,
+              "balanced_accuracy": 0.5770114942528736,
+              "f1": 0.5614035087719298,
+              "brier": 0.2493334760250957,
+              "log_loss": 0.6918152893338648
+            },
+            "RandomForest": {
+              "accuracy": 0.4406779661016949,
+              "balanced_accuracy": 0.4419540229885057,
+              "f1": 0.4,
+              "brier": 0.2553483800714971,
+              "log_loss": 0.7038837758209374
+            },
+            "ExtraTrees": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.47672413793103446,
+              "f1": 0.40384615384615385,
+              "brier": 0.2523328966271846,
+              "log_loss": 0.6978218428218059
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.4735632183908046,
+              "f1": 0.5079365079365079,
+              "brier": 0.2636500425255481,
+              "log_loss": 0.7217304766040469
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.4661016949152542,
+              "balanced_accuracy": 0.46695402298850575,
+              "f1": 0.4424778761061947,
+              "brier": 0.2531878338895909,
+              "log_loss": 0.6995550741673539
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.47327586206896555,
+              "f1": 0.515625,
+              "brier": 0.2648319447226097,
+              "log_loss": 0.7243104603038172
+            }
+          },
+          {
+            "fold": 4,
+            "train_rows": 947,
+            "test_rows": 118,
+            "baseline_accuracy": 0.4661016949152542,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.47822463397235565
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 80,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 5,
+                  "l2_regularization": 2.0
+                },
+                "inner_mean_balanced_accuracy": 0.5011462136772824
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.5169491525423728,
+              "balanced_accuracy": 0.5199134199134199,
+              "f1": 0.5210084033613446,
+              "brier": 0.2493045914012309,
+              "log_loss": 0.6917559904893773
+            },
+            "RandomForest": {
+              "accuracy": 0.4830508474576271,
+              "balanced_accuracy": 0.4858585858585858,
+              "f1": 0.48739495798319327,
+              "brier": 0.2562556846193373,
+              "log_loss": 0.7082783273667259
+            },
+            "ExtraTrees": {
+              "accuracy": 0.4576271186440678,
+              "balanced_accuracy": 0.4597402597402597,
+              "f1": 0.4576271186440678,
+              "brier": 0.2517398134499268,
+              "log_loss": 0.6967362812138694
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.5338983050847458,
+              "balanced_accuracy": 0.5415584415584416,
+              "f1": 0.5669291338582677,
+              "brier": 0.2615500608775954,
+              "log_loss": 0.7187106230519184
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5,
+              "balanced_accuracy": 0.5028860028860028,
+              "f1": 0.5042016806722689,
+              "brier": 0.25490497723176814,
+              "log_loss": 0.7042484610079172
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5169491525423728,
+              "balanced_accuracy": 0.5199134199134199,
+              "f1": 0.5210084033613446,
+              "brier": 0.25590892357418216,
+              "log_loss": 0.7055933968700427
+            }
+          },
+          {
+            "fold": 5,
+            "train_rows": 1065,
+            "test_rows": 118,
+            "baseline_accuracy": 0.4830508474576271,
+            "inner_tuning_selection": {
+              "TunedRandomForest": {
+                "params": {
+                  "n_estimators": 140,
+                  "max_depth": 4,
+                  "min_samples_leaf": 10
+                },
+                "inner_mean_balanced_accuracy": 0.4890690081872011
+              },
+              "TunedHistGradientBoosting": {
+                "params": {
+                  "max_iter": 160,
+                  "learning_rate": 0.03,
+                  "max_leaf_nodes": 9,
+                  "l2_regularization": 4.0
+                },
+                "inner_mean_balanced_accuracy": 0.4998291070912752
+              }
+            },
+            "LogisticRegression": {
+              "accuracy": 0.4745762711864407,
+              "balanced_accuracy": 0.4837503595053207,
+              "f1": 0.581081081081081,
+              "brier": 0.25088183598790553,
+              "log_loss": 0.6949077027723699
+            },
+            "RandomForest": {
+              "accuracy": 0.576271186440678,
+              "balanced_accuracy": 0.5763589301121657,
+              "f1": 0.5689655172413793,
+              "brier": 0.24549660004424798,
+              "log_loss": 0.6840767591270166
+            },
+            "ExtraTrees": {
+              "accuracy": 0.559322033898305,
+              "balanced_accuracy": 0.5553638193845268,
+              "f1": 0.49019607843137253,
+              "brier": 0.24783816211022436,
+              "log_loss": 0.6888091264927467
+            },
+            "HistGradientBoosting": {
+              "accuracy": 0.576271186440678,
+              "balanced_accuracy": 0.5752085130859936,
+              "f1": 0.5535714285714286,
+              "brier": 0.24004193454199907,
+              "log_loss": 0.6727175336399869
+            },
+            "TunedRandomForest": {
+              "accuracy": 0.5677966101694916,
+              "balanced_accuracy": 0.5681622088006902,
+              "f1": 0.5641025641025641,
+              "brier": 0.24634857954171538,
+              "log_loss": 0.6857768684819705
+            },
+            "TunedHistGradientBoosting": {
+              "accuracy": 0.5677966101694916,
+              "balanced_accuracy": 0.5693126258268623,
+              "f1": 0.5785123966942148,
+              "brier": 0.24231204291018493,
+              "log_loss": 0.6773703105637008
+            }
+          }
+        ],
+        "summary": {
+          "baseline_accuracy": {
+            "mean_accuracy": 0.49656744053553625,
+            "fold_std": 0.021841944237971107
+          },
+          "LogisticRegression": {
+            "mean_accuracy": 0.5253240279162512,
+            "fold_std": 0.046918358855610354,
+            "mean_balanced_accuracy": 0.526354712681816,
+            "mean_f1": 0.5686288498026856,
+            "mean_brier": 0.24974985732561214,
+            "mean_log_loss": 0.6926492928033444
+          },
+          "RandomForest": {
+            "mean_accuracy": 0.4798319327731093,
+            "fold_std": 0.056368456643013716,
+            "mean_balanced_accuracy": 0.47931612606087004,
+            "mean_f1": 0.4811972314489242,
+            "mean_brier": 0.25332777544113266,
+            "mean_log_loss": 0.7002884204506484
+          },
+          "ExtraTrees": {
+            "mean_accuracy": 0.505027773821393,
+            "fold_std": 0.04097939800256785,
+            "mean_balanced_accuracy": 0.5041931016138059,
+            "mean_f1": 0.481674622701542,
+            "mean_brier": 0.25033407475823016,
+            "mean_log_loss": 0.6938361428504987
+          },
+          "HistGradientBoosting": {
+            "mean_accuracy": 0.5186298248112804,
+            "fold_std": 0.04024190349938724,
+            "mean_balanced_accuracy": 0.5179571168780618,
+            "mean_f1": 0.5456153852617163,
+            "mean_brier": 0.25757758390455476,
+            "mean_log_loss": 0.7092931516274499
+          },
+          "TunedRandomForest": {
+            "mean_accuracy": 0.4899729383278736,
+            "fold_std": 0.04767432189356214,
+            "mean_balanced_accuracy": 0.489472095712533,
+            "mean_f1": 0.4936023474221029,
+            "mean_brier": 0.2538729560103439,
+            "mean_log_loss": 0.7012268989719367
+          },
+          "TunedHistGradientBoosting": {
+            "mean_accuracy": 0.523629112662014,
+            "fold_std": 0.03394731967768373,
+            "mean_balanced_accuracy": 0.5224762095955752,
+            "mean_f1": 0.5530411648130327,
+            "mean_brier": 0.257485479709206,
+            "mean_log_loss": 0.708950605322989
+          }
+        },
+        "method": "expanding-window walk-forward; chronological; one-row target-boundary purge; identical folds across feature sets; no random shuffle"
+      }
+    }
+  },
+  "important_note": "Research only; not investment advice. Scores are historical diagnostics, not expected returns.",
+  "comparison_population": {
+    "rows": 1184,
+    "start": "2022-01-17 00:00:00+05:30",
+    "end": "2026-11-04 00:00:00+05:30",
+    "same_rows_for_all_feature_sets": true,
+    "note": "All feature sets are evaluated on the same common complete-case dates."
+  },
+  "tuning_note": "TunedRandomForest and TunedHistGradientBoosting select among small predeclared grids using three expanding chronological inner splits of each outer training window only. The outer test fold is not used for tuning. Other candidates use fixed reference configurations. This is a limited research grid, not exhaustive optimization.",
+  "sequence_models": {
+    "pytorch_available": true,
+    "status": "See Colab notebook for sequence training; the API path remains unchanged."
+  }
+}

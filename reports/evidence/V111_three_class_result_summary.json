@@ -1,0 +1,67 @@
+{
+  "release": "V111",
+  "status": "EXPERIMENT_RECORDED_RESEARCH_ONLY",
+  "experiment_source": "Upstox V3 historical candles",
+  "symbol": "^NSEI",
+  "instrument_key": "NSE_INDEX|Nifty 50",
+  "interval_minutes": 5,
+  "fetched_at": "2026-11-19T17:41:05.225028+00:00",
+  "candles_received": 1439,
+  "latest_candle_at": "2026-11-18 09:55:00+00:00",
+  "observations": 1373,
+  "folds": 3,
+  "target_definition": "DOWN if executable return is below negative round-trip cost; UP if above positive round-trip cost; otherwise NO_TRADE",
+  "entry_exit_rule": "next-close entry; exit close four bars after signal (three bars held)",
+  "round_trip_cost_bps": 20.0,
+  "neutral_band_return": 0.002,
+  "test_class_counts_across_folds": {
+    "DOWN": 30,
+    "NO_TRADE": 608,
+    "UP": 49
+  },
+  "test_class_shares": {
+    "DOWN": 0.043668,
+    "NO_TRADE": 0.885007,
+    "UP": 0.071325
+  },
+  "model_comparison": [
+    {
+      "model": "HistGradientBoosting",
+      "folds_evaluated": 3,
+      "mean_accuracy": 0.8820960698689956,
+      "mean_balanced_accuracy": 0.35135230989108174,
+      "mean_macro_f1": 0.34552852610743856,
+      "mean_multiclass_brier_score": 0.21140771670504907,
+      "mean_log_loss": 0.5028499036055853
+    },
+    {
+      "model": "Logistic Regression",
+      "folds_evaluated": 3,
+      "mean_accuracy": 0.8719068413391557,
+      "mean_balanced_accuracy": 0.3511310248759823,
+      "mean_macro_f1": 0.3376840628382638,
+      "mean_multiclass_brier_score": 0.2191840087561161,
+      "mean_log_loss": 0.47953273146644015
+    },
+    {
+      "model": "Majority-class baseline",
+      "folds_evaluated": 3,
+      "mean_accuracy": 0.8850072780203785,
+      "mean_balanced_accuracy": 0.3333333333333333,
+      "mean_macro_f1": 0.3129266946691633,
+      "mean_multiclass_brier_score": null,
+      "mean_log_loss": null
+    },
+    {
+      "model": "Random Forest",
+      "folds_evaluated": 3,
+      "mean_accuracy": 0.8850072780203785,
+      "mean_balanced_accuracy": 0.3333333333333333,
+      "mean_macro_f1": 0.3129266946691633,
+      "mean_multiclass_brier_score": 0.19692395762005968,
+      "mean_log_loss": 0.41311677378829903
+    }
+  ],
+  "trading_enabled": false,
+  "interpretation": "Raw accuracy is dominated by NO_TRADE prevalence. The majority baseline achieves 88.50% by predicting NO_TRADE; HistGradientBoosting scores 88.21%, Logistic Regression 87.19%, and Random Forest 88.50%. Balanced accuracy is only about 33–35%. This is not 88% directional accuracy and does not establish a tradable edge."
+}

@@ -1,0 +1,537 @@
+﻿{
+    "status":  "evaluated",
+    "target_definition":  "DOWN if executable return is below negative round-trip cost; UP if above positive round-trip cost; otherwise NO_TRADE",
+    "entry_exit_rule":  "next-close entry; exit close four bars after signal (three bars held)",
+    "round_trip_cost_bps":  20.0,
+    "neutral_band_return":  0.002,
+    "class_labels":  {
+                         "0":  "DOWN",
+                         "1":  "NO_TRADE",
+                         "2":  "UP"
+                     },
+    "observations":  1373,
+    "feature_columns":  [
+                            "ret_1",
+                            "ret_2",
+                            "ret_3",
+                            "ret_6",
+                            "ret_12",
+                            "ret_24",
+                            "momentum_acceleration",
+                            "volatility_12",
+                            "volatility_24",
+                            "sma_gap_5",
+                            "sma_gap_20",
+                            "sma_gap_50",
+                            "ema_gap_8",
+                            "ema_gap_21",
+                            "ema_gap_50",
+                            "time_of_day_sin",
+                            "time_of_day_cos",
+                            "weekday_sin",
+                            "weekday_cos",
+                            "gap_pct",
+                            "range_pct",
+                            "body_pct",
+                            "close_location",
+                            "news_event_count_24h",
+                            "news_sentiment_24h",
+                            "news_relevance_24h"
+                        ],
+    "folds":  [
+                  {
+                      "fold":  1,
+                      "train_observations":  682,
+                      "test_observations":  229,
+                      "test_start":  "2026-11-04T08:10:00+00:00",
+                      "test_end":  "2026-11-09T07:55:00+00:00",
+                      "train_class_counts":  {
+                                                 "DOWN":  44,
+                                                 "NO_TRADE":  591,
+                                                 "UP":  47
+                                             },
+                      "test_class_counts":  {
+                                                "DOWN":  8,
+                                                "NO_TRADE":  194,
+                                                "UP":  27
+                                            },
+                      "Majority-class baseline":  {
+                                                      "accuracy":  0.8471615720524017,
+                                                      "balanced_accuracy":  0.3333333333333333,
+                                                      "macro_f1":  0.30575256107171,
+                                                      "confusion_matrix":  [
+                                                                               [
+                                                                                   0,
+                                                                                   8,
+                                                                                   0
+                                                                               ],
+                                                                               [
+                                                                                   0,
+                                                                                   194,
+                                                                                   0
+                                                                               ],
+                                                                               [
+                                                                                   0,
+                                                                                   27,
+                                                                                   0
+                                                                               ]
+                                                                           ],
+                                                      "prediction_class":  "NO_TRADE"
+                                                  },
+                      "Random Forest":  {
+                                            "status":  "evaluated",
+                                            "accuracy":  0.8471615720524017,
+                                            "balanced_accuracy":  0.3333333333333333,
+                                            "macro_f1":  0.30575256107171,
+                                            "macro_precision":  0.2823871906841339,
+                                            "macro_recall":  0.3333333333333333,
+                                            "multiclass_brier_score":  0.26862194773801246,
+                                            "log_loss":  0.538510492467123,
+                                            "confusion_matrix":  [
+                                                                     [
+                                                                         0,
+                                                                         8,
+                                                                         0
+                                                                     ],
+                                                                     [
+                                                                         0,
+                                                                         194,
+                                                                         0
+                                                                     ],
+                                                                     [
+                                                                         0,
+                                                                         27,
+                                                                         0
+                                                                     ]
+                                                                 ],
+                                            "confusion_matrix_labels":  [
+                                                                            "DOWN",
+                                                                            "NO_TRADE",
+                                                                            "UP"
+                                                                        ],
+                                            "prediction_class_counts":  {
+                                                                            "DOWN":  0,
+                                                                            "NO_TRADE":  229,
+                                                                            "UP":  0
+                                                                        }
+                                        },
+                      "HistGradientBoosting":  {
+                                                   "status":  "evaluated",
+                                                   "accuracy":  0.8427947598253275,
+                                                   "balanced_accuracy":  0.3316151202749141,
+                                                   "macro_f1":  0.3048973143759874,
+                                                   "macro_precision":  0.28216374269005845,
+                                                   "macro_recall":  0.3316151202749141,
+                                                   "multiclass_brier_score":  0.2863323838467919,
+                                                   "log_loss":  0.7006396631413323,
+                                                   "confusion_matrix":  [
+                                                                            [
+                                                                                0,
+                                                                                8,
+                                                                                0
+                                                                            ],
+                                                                            [
+                                                                                0,
+                                                                                193,
+                                                                                1
+                                                                            ],
+                                                                            [
+                                                                                0,
+                                                                                27,
+                                                                                0
+                                                                            ]
+                                                                        ],
+                                                   "confusion_matrix_labels":  [
+                                                                                   "DOWN",
+                                                                                   "NO_TRADE",
+                                                                                   "UP"
+                                                                               ],
+                                                   "prediction_class_counts":  {
+                                                                                   "DOWN":  0,
+                                                                                   "NO_TRADE":  228,
+                                                                                   "UP":  1
+                                                                               }
+                                               },
+                      "Logistic Regression":  {
+                                                  "status":  "evaluated",
+                                                  "accuracy":  0.8165938864628821,
+                                                  "balanced_accuracy":  0.3612542955326461,
+                                                  "macro_f1":  0.33727916778764233,
+                                                  "macro_precision":  0.31643835616438354,
+                                                  "macro_recall":  0.3612542955326461,
+                                                  "multiclass_brier_score":  0.30258269177957414,
+                                                  "log_loss":  0.67876659143275,
+                                                  "confusion_matrix":  [
+                                                                           [
+                                                                               1,
+                                                                               7,
+                                                                               0
+                                                                           ],
+                                                                           [
+                                                                               8,
+                                                                               186,
+                                                                               0
+                                                                           ],
+                                                                           [
+                                                                               1,
+                                                                               26,
+                                                                               0
+                                                                           ]
+                                                                       ],
+                                                  "confusion_matrix_labels":  [
+                                                                                  "DOWN",
+                                                                                  "NO_TRADE",
+                                                                                  "UP"
+                                                                              ],
+                                                  "prediction_class_counts":  {
+                                                                                  "DOWN":  10,
+                                                                                  "NO_TRADE":  219,
+                                                                                  "UP":  0
+                                                                              }
+                                              }
+                  },
+                  {
+                      "fold":  2,
+                      "train_observations":  911,
+                      "test_observations":  229,
+                      "test_start":  "2026-11-09T08:00:00+00:00",
+                      "test_end":  "2026-11-13T08:45:00+00:00",
+                      "train_class_counts":  {
+                                                 "DOWN":  52,
+                                                 "NO_TRADE":  785,
+                                                 "UP":  74
+                                             },
+                      "test_class_counts":  {
+                                                "DOWN":  11,
+                                                "NO_TRADE":  207,
+                                                "UP":  11
+                                            },
+                      "Majority-class baseline":  {
+                                                      "accuracy":  0.9039301310043668,
+                                                      "balanced_accuracy":  0.3333333333333333,
+                                                      "macro_f1":  0.3165137614678899,
+                                                      "confusion_matrix":  [
+                                                                               [
+                                                                                   0,
+                                                                                   11,
+                                                                                   0
+                                                                               ],
+                                                                               [
+                                                                                   0,
+                                                                                   207,
+                                                                                   0
+                                                                               ],
+                                                                               [
+                                                                                   0,
+                                                                                   11,
+                                                                                   0
+                                                                               ]
+                                                                           ],
+                                                      "prediction_class":  "NO_TRADE"
+                                                  },
+                      "Random Forest":  {
+                                            "status":  "evaluated",
+                                            "accuracy":  0.9039301310043668,
+                                            "balanced_accuracy":  0.3333333333333333,
+                                            "macro_f1":  0.3165137614678899,
+                                            "macro_precision":  0.30131004366812225,
+                                            "macro_recall":  0.3333333333333333,
+                                            "multiclass_brier_score":  0.16973376116044894,
+                                            "log_loss":  0.3737852119315652,
+                                            "confusion_matrix":  [
+                                                                     [
+                                                                         0,
+                                                                         11,
+                                                                         0
+                                                                     ],
+                                                                     [
+                                                                         0,
+                                                                         207,
+                                                                         0
+                                                                     ],
+                                                                     [
+                                                                         0,
+                                                                         11,
+                                                                         0
+                                                                     ]
+                                                                 ],
+                                            "confusion_matrix_labels":  [
+                                                                            "DOWN",
+                                                                            "NO_TRADE",
+                                                                            "UP"
+                                                                        ],
+                                            "prediction_class_counts":  {
+                                                                            "DOWN":  0,
+                                                                            "NO_TRADE":  229,
+                                                                            "UP":  0
+                                                                        }
+                                        },
+                      "HistGradientBoosting":  {
+                                                   "status":  "evaluated",
+                                                   "accuracy":  0.8951965065502183,
+                                                   "balanced_accuracy":  0.35880544576196755,
+                                                   "macro_f1":  0.3624338624338624,
+                                                   "macro_precision":  0.41333333333333333,
+                                                   "macro_recall":  0.35880544576196755,
+                                                   "multiclass_brier_score":  0.18502755502630572,
+                                                   "log_loss":  0.43358411459098756,
+                                                   "confusion_matrix":  [
+                                                                            [
+                                                                                0,
+                                                                                11,
+                                                                                0
+                                                                            ],
+                                                                            [
+                                                                                1,
+                                                                                204,
+                                                                                2
+                                                                            ],
+                                                                            [
+                                                                                0,
+                                                                                10,
+                                                                                1
+                                                                            ]
+                                                                        ],
+                                                   "confusion_matrix_labels":  [
+                                                                                   "DOWN",
+                                                                                   "NO_TRADE",
+                                                                                   "UP"
+                                                                               ],
+                                                   "prediction_class_counts":  {
+                                                                                   "DOWN":  1,
+                                                                                   "NO_TRADE":  225,
+                                                                                   "UP":  3
+                                                                               }
+                                               },
+                      "Logistic Regression":  {
+                                                  "status":  "evaluated",
+                                                  "accuracy":  0.8951965065502183,
+                                                  "balanced_accuracy":  0.35880544576196755,
+                                                  "macro_f1":  0.3592592592592592,
+                                                  "macro_precision":  0.3855555555555556,
+                                                  "macro_recall":  0.35880544576196755,
+                                                  "multiclass_brier_score":  0.18580697620742503,
+                                                  "log_loss":  0.4000883721756741,
+                                                  "confusion_matrix":  [
+                                                                           [
+                                                                               0,
+                                                                               11,
+                                                                               0
+                                                                           ],
+                                                                           [
+                                                                               0,
+                                                                               204,
+                                                                               3
+                                                                           ],
+                                                                           [
+                                                                               0,
+                                                                               10,
+                                                                               1
+                                                                           ]
+                                                                       ],
+                                                  "confusion_matrix_labels":  [
+                                                                                  "DOWN",
+                                                                                  "NO_TRADE",
+                                                                                  "UP"
+                                                                              ],
+                                                  "prediction_class_counts":  {
+                                                                                  "DOWN":  0,
+                                                                                  "NO_TRADE":  225,
+                                                                                  "UP":  4
+                                                                              }
+                                              }
+                  },
+                  {
+                      "fold":  3,
+                      "train_observations":  1140,
+                      "test_observations":  229,
+                      "test_start":  "2026-11-13T08:50:00+00:00",
+                      "test_end":  "2026-11-18T09:35:00+00:00",
+                      "train_class_counts":  {
+                                                 "DOWN":  63,
+                                                 "NO_TRADE":  992,
+                                                 "UP":  85
+                                             },
+                      "test_class_counts":  {
+                                                "DOWN":  11,
+                                                "NO_TRADE":  207,
+                                                "UP":  11
+                                            },
+                      "Majority-class baseline":  {
+                                                      "accuracy":  0.9039301310043668,
+                                                      "balanced_accuracy":  0.3333333333333333,
+                                                      "macro_f1":  0.3165137614678899,
+                                                      "confusion_matrix":  [
+                                                                               [
+                                                                                   0,
+                                                                                   11,
+                                                                                   0
+                                                                               ],
+                                                                               [
+                                                                                   0,
+                                                                                   207,
+                                                                                   0
+                                                                               ],
+                                                                               [
+                                                                                   0,
+                                                                                   11,
+                                                                                   0
+                                                                               ]
+                                                                           ],
+                                                      "prediction_class":  "NO_TRADE"
+                                                  },
+                      "Random Forest":  {
+                                            "status":  "evaluated",
+                                            "accuracy":  0.9039301310043668,
+                                            "balanced_accuracy":  0.3333333333333333,
+                                            "macro_f1":  0.3165137614678899,
+                                            "macro_precision":  0.30131004366812225,
+                                            "macro_recall":  0.3333333333333333,
+                                            "multiclass_brier_score":  0.15241616396171762,
+                                            "log_loss":  0.3270546169662088,
+                                            "confusion_matrix":  [
+                                                                     [
+                                                                         0,
+                                                                         11,
+                                                                         0
+                                                                     ],
+                                                                     [
+                                                                         0,
+                                                                         207,
+                                                                         0
+                                                                     ],
+                                                                     [
+                                                                         0,
+                                                                         11,
+                                                                         0
+                                                                     ]
+                                                                 ],
+                                            "confusion_matrix_labels":  [
+                                                                            "DOWN",
+                                                                            "NO_TRADE",
+                                                                            "UP"
+                                                                        ],
+                                            "prediction_class_counts":  {
+                                                                            "DOWN":  0,
+                                                                            "NO_TRADE":  229,
+                                                                            "UP":  0
+                                                                        }
+                                        },
+                      "HistGradientBoosting":  {
+                                                   "status":  "evaluated",
+                                                   "accuracy":  0.9082969432314411,
+                                                   "balanced_accuracy":  0.3636363636363636,
+                                                   "macro_f1":  0.36925440151246597,
+                                                   "macro_precision":  0.47063142437591776,
+                                                   "macro_recall":  0.3636363636363636,
+                                                   "multiclass_brier_score":  0.16286321124204955,
+                                                   "log_loss":  0.3743259330844363,
+                                                   "confusion_matrix":  [
+                                                                            [
+                                                                                0,
+                                                                                10,
+                                                                                1
+                                                                            ],
+                                                                            [
+                                                                                0,
+                                                                                207,
+                                                                                0
+                                                                            ],
+                                                                            [
+                                                                                0,
+                                                                                10,
+                                                                                1
+                                                                            ]
+                                                                        ],
+                                                   "confusion_matrix_labels":  [
+                                                                                   "DOWN",
+                                                                                   "NO_TRADE",
+                                                                                   "UP"
+                                                                               ],
+                                                   "prediction_class_counts":  {
+                                                                                   "DOWN":  0,
+                                                                                   "NO_TRADE":  227,
+                                                                                   "UP":  2
+                                                                               }
+                                               },
+                      "Logistic Regression":  {
+                                                  "status":  "evaluated",
+                                                  "accuracy":  0.9039301310043668,
+                                                  "balanced_accuracy":  0.3333333333333333,
+                                                  "macro_f1":  0.3165137614678899,
+                                                  "macro_precision":  0.30131004366812225,
+                                                  "macro_recall":  0.3333333333333333,
+                                                  "multiclass_brier_score":  0.16916235828134912,
+                                                  "log_loss":  0.3597432307908964,
+                                                  "confusion_matrix":  [
+                                                                           [
+                                                                               0,
+                                                                               11,
+                                                                               0
+                                                                           ],
+                                                                           [
+                                                                               0,
+                                                                               207,
+                                                                               0
+                                                                           ],
+                                                                           [
+                                                                               0,
+                                                                               11,
+                                                                               0
+                                                                           ]
+                                                                       ],
+                                                  "confusion_matrix_labels":  [
+                                                                                  "DOWN",
+                                                                                  "NO_TRADE",
+                                                                                  "UP"
+                                                                              ],
+                                                  "prediction_class_counts":  {
+                                                                                  "DOWN":  0,
+                                                                                  "NO_TRADE":  229,
+                                                                                  "UP":  0
+                                                                              }
+                                              }
+                  }
+              ],
+    "model_comparison":  [
+                             {
+                                 "model":  "HistGradientBoosting",
+                                 "folds_evaluated":  3,
+                                 "mean_accuracy":  0.8820960698689956,
+                                 "mean_balanced_accuracy":  0.35135230989108174,
+                                 "mean_macro_f1":  0.34552852610743856,
+                                 "mean_multiclass_brier_score":  0.21140771670504907,
+                                 "mean_log_loss":  0.5028499036055853
+                             },
+                             {
+                                 "model":  "Logistic Regression",
+                                 "folds_evaluated":  3,
+                                 "mean_accuracy":  0.8719068413391557,
+                                 "mean_balanced_accuracy":  0.3511310248759823,
+                                 "mean_macro_f1":  0.3376840628382638,
+                                 "mean_multiclass_brier_score":  0.2191840087561161,
+                                 "mean_log_loss":  0.47953273146644015
+                             },
+                             {
+                                 "model":  "Majority-class baseline",
+                                 "folds_evaluated":  3,
+                                 "mean_accuracy":  0.8850072780203785,
+                                 "mean_balanced_accuracy":  0.3333333333333333,
+                                 "mean_macro_f1":  0.3129266946691633,
+                                 "mean_multiclass_brier_score":  null,
+                                 "mean_log_loss":  null
+                             },
+                             {
+                                 "model":  "Random Forest",
+                                 "folds_evaluated":  3,
+                                 "mean_accuracy":  0.8850072780203785,
+                                 "mean_balanced_accuracy":  0.3333333333333333,
+                                 "mean_macro_f1":  0.3129266946691633,
+                                 "mean_multiclass_brier_score":  0.19692395762005968,
+                                 "mean_log_loss":  0.41311677378829903
+                             }
+                         ],
+    "method":  "expanding chronological folds with four-row boundary purge; no shuffling; no test-based model or threshold selection",
+    "trading_enabled":  false,
+    "note":  "This is an additional research evaluation. It does not place orders or replace the existing binary benchmark."
+}

@@ -1,0 +1,475 @@
+{
+  "symbol": "^NSEI",
+  "latest_session_date": "2026-11-20",
+  "latest_close": 25651.19921875,
+  "predicted_direction": "UP",
+  "model": "RandomForest + ExtraTrees soft-voting ensemble",
+  "model_version": "bharatstock-rf-et-v1",
+  "model_artifact_status": "loaded",
+  "model_trained_at": "2026-11-20T05:51:26.130207+00:00",
+  "model_training_rows": 1186,
+  "model_feature_schema": [
+    "RSI",
+    "MACD_pct",
+    "MACD_Signal_pct",
+    "SMA20_gap",
+    "SMA50_gap",
+    "EMA20_gap",
+    "ATR_pct",
+    "Return_5"
+  ],
+  "confidence": 0.6588085177464049,
+  "signal_quality": "LOW_VALIDATION_SUPPORT",
+  "indicator_context": [
+    {
+      "indicator": "RSI",
+      "value": 90.25440680274167,
+      "state": "overbought_range",
+      "note": "Strong recent momentum; reversal is not guaranteed."
+    },
+    {
+      "indicator": "SMA20",
+      "value": 0.05693989419860568,
+      "state": "above_average",
+      "note": "Close relative to the moving average; descriptive context only."
+    },
+    {
+      "indicator": "SMA50",
+      "value": 0.09233896724322177,
+      "state": "above_average",
+      "note": "Close relative to the moving average; descriptive context only."
+    },
+    {
+      "indicator": "EMA20",
+      "value": 0.044647825050631695,
+      "state": "above_average",
+      "note": "Close relative to the moving average; descriptive context only."
+    },
+    {
+      "indicator": "ATR",
+      "value": 0.013339666071811727,
+      "state": "volatility_context",
+      "note": "ATR divided by close; larger values indicate wider recent price ranges."
+    }
+  ],
+  "model_validation_status": "WEAK_BELOW_BASELINE",
+  "walk_forward_accuracy_gap_vs_baseline": -0.07388577827547593,
+  "accuracy_target_note": "80% directional accuracy is a research goal, not a guaranteed result. Compare models on chronological out-of-sample folds; this output is research-only.",
+  "feature_importance": [
+    {
+      "feature": "EMA20_gap",
+      "importance": 0.13796211931564709
+    },
+    {
+      "feature": "RSI",
+      "importance": 0.13602821857565156
+    },
+    {
+      "feature": "SMA20_gap",
+      "importance": 0.1333415258560717
+    },
+    {
+      "feature": "SMA50_gap",
+      "importance": 0.13330700041518484
+    },
+    {
+      "feature": "MACD_pct",
+      "importance": 0.11847597074353797
+    },
+    {
+      "feature": "Return_5",
+      "importance": 0.11533290126354913
+    },
+    {
+      "feature": "MACD_Signal_pct",
+      "importance": 0.11407317310847595
+    },
+    {
+      "feature": "ATR_pct",
+      "importance": 0.11147909072188181
+    }
+  ],
+  "walk_forward": {
+    "folds": [
+      {
+        "fold": 1,
+        "train_observations": 472,
+        "test_start_index": 473,
+        "test_end_index": 568,
+        "purged_boundary_observations": 1,
+        "test_observations": 95,
+        "accuracy": 0.4,
+        "balanced_accuracy": 0.3976648351648352,
+        "precision_up": 0.48936170212765956,
+        "brier_score": 0.2858233512086406,
+        "log_loss": 0.7672401103327601,
+        "baseline_accuracy": 0.5894736842105263,
+        "baseline_balanced_accuracy": 0.5,
+        "baseline_precision_up": 0.5894736842105263
+      },
+      {
+        "fold": 2,
+        "train_observations": 567,
+        "test_start_index": 568,
+        "test_end_index": 663,
+        "purged_boundary_observations": 1,
+        "test_observations": 95,
+        "accuracy": 0.4421052631578947,
+        "balanced_accuracy": 0.39473684210526316,
+        "precision_up": 0.5294117647058824,
+        "brier_score": 0.2592827036774325,
+        "log_loss": 0.7118904712471886,
+        "baseline_accuracy": 0.6,
+        "baseline_balanced_accuracy": 0.5,
+        "baseline_precision_up": 0.6
+      },
+      {
+        "fold": 3,
+        "train_observations": 662,
+        "test_start_index": 663,
+        "test_end_index": 758,
+        "purged_boundary_observations": 1,
+        "test_observations": 95,
+        "accuracy": 0.5263157894736842,
+        "balanced_accuracy": 0.5191053122087605,
+        "precision_up": 0.4090909090909091,
+        "brier_score": 0.24310467882540043,
+        "log_loss": 0.678944337761664,
+        "baseline_accuracy": 0.3894736842105263,
+        "baseline_balanced_accuracy": 0.5,
+        "baseline_precision_up": 0.3894736842105263
+      },
+      {
+        "fold": 4,
+        "train_observations": 757,
+        "test_start_index": 758,
+        "test_end_index": 853,
+        "purged_boundary_observations": 1,
+        "test_observations": 95,
+        "accuracy": 0.4631578947368421,
+        "balanced_accuracy": 0.45666666666666667,
+        "precision_up": 0.4915254237288136,
+        "brier_score": 0.2604963422906589,
+        "log_loss": 0.7146099603563704,
+        "baseline_accuracy": 0.5263157894736842,
+        "baseline_balanced_accuracy": 0.5,
+        "baseline_precision_up": 0.5263157894736842
+      },
+      {
+        "fold": 5,
+        "train_observations": 852,
+        "test_start_index": 853,
+        "test_end_index": 947,
+        "purged_boundary_observations": 1,
+        "test_observations": 94,
+        "accuracy": 0.4574468085106383,
+        "balanced_accuracy": 0.43864468864468864,
+        "precision_up": 0.5079365079365079,
+        "brier_score": 0.25886822617586613,
+        "log_loss": 0.7112747163680051,
+        "baseline_accuracy": 0.5531914893617021,
+        "baseline_balanced_accuracy": 0.5,
+        "baseline_precision_up": 0.5531914893617021
+      }
+    ],
+    "model_comparison": [
+      {
+        "model": "Majority-class baseline",
+        "mean_accuracy": 0.5316909294512878,
+        "mean_balanced_accuracy": 0.5,
+        "mean_precision_up": 0.5316909294512878,
+        "mean_brier_score": null,
+        "mean_log_loss": null,
+        "folds_evaluated": 5
+      },
+      {
+        "model": "Logistic Regression",
+        "mean_accuracy": 0.5296304591265397,
+        "mean_balanced_accuracy": 0.4900051907973868,
+        "mean_precision_up": 0.4771058150035971,
+        "mean_brier_score": 0.2518470525200027,
+        "mean_log_loss": 0.696905021274298,
+        "folds_evaluated": 5
+      },
+      {
+        "model": "Extra Trees",
+        "mean_accuracy": 0.4726091825307951,
+        "mean_balanced_accuracy": 0.44963617343835127,
+        "mean_precision_up": 0.4926516706677392,
+        "mean_brier_score": 0.2563008858185404,
+        "mean_log_loss": 0.7058858375838004,
+        "folds_evaluated": 5
+      },
+      {
+        "model": "Random Forest",
+        "mean_accuracy": 0.4641433370660694,
+        "mean_balanced_accuracy": 0.4560274076054475,
+        "mean_precision_up": 0.4958958001063264,
+        "mean_brier_score": 0.2700113665630126,
+        "mean_log_loss": 0.7355104378491024,
+        "folds_evaluated": 5
+      },
+      {
+        "model": "HistGradientBoosting",
+        "mean_accuracy": 0.45997760358342665,
+        "mean_balanced_accuracy": 0.4613590771322169,
+        "mean_precision_up": 0.4934439384375585,
+        "mean_brier_score": 0.3176114161548698,
+        "mean_log_loss": 0.8595352357540346,
+        "folds_evaluated": 5
+      },
+      {
+        "model": "RF + Extra Trees ensemble",
+        "mean_accuracy": 0.4578051511758119,
+        "mean_balanced_accuracy": 0.44136366895804285,
+        "mean_precision_up": 0.48546526151795455,
+        "mean_brier_score": 0.2615150604355997,
+        "mean_log_loss": 0.7167919192131975,
+        "folds_evaluated": 5
+      }
+    ],
+    "selection_recommendation": {
+      "status": "NO_CANDIDATE_CLEARED_BASELINE_GATE",
+      "candidate": null,
+      "reason": "No candidate beat the fold-trained majority baseline by at least 1 percentage point while reaching 0.50 mean balanced accuracy on at least five chronological folds.",
+      "minimum_accuracy_edge_over_baseline": 0.01,
+      "minimum_folds": 5,
+      "production_model_changed": false
+    },
+    "paired_model_comparison": {
+      "candidate": "Random Forest",
+      "current_model": "RF + Extra Trees ensemble",
+      "same_unseen_folds": 5,
+      "current_model_fold_wins": 1,
+      "ties": 0,
+      "paired_observations": 474,
+      "moving_block_bootstrap_95pct_ci": {
+        "lower": -0.02109704641350211,
+        "upper": 0.035864978902953586,
+        "block_length": 8,
+        "resamples": 1000
+      },
+      "verdict": "NO_CLEAR_WINNER",
+      "rf_fold_wins": 4,
+      "mean_accuracy_difference_rf_minus_current": 0.006329113924050633,
+      "interpretation": "Paired chronological model-selection folds with moving-block bootstrap intervals. These folds must precede the final holdout; intervals quantify sampling uncertainty but do not guarantee future performance. A new future-period holdout is needed for independent confirmation after model selection."
+    },
+    "paired_candidate_comparisons": [
+      {
+        "candidate": "Random Forest",
+        "current_model": "RF + Extra Trees ensemble",
+        "same_unseen_folds": 5,
+        "candidate_fold_wins": 4,
+        "current_model_fold_wins": 1,
+        "ties": 0,
+        "paired_observations": 474,
+        "mean_accuracy_difference_candidate_minus_current": 0.006329113924050633,
+        "moving_block_bootstrap_95pct_ci": {
+          "lower": -0.02109704641350211,
+          "upper": 0.035864978902953586,
+          "block_length": 8,
+          "resamples": 1000
+        },
+        "verdict": "NO_CLEAR_WINNER"
+      },
+      {
+        "candidate": "Extra Trees",
+        "current_model": "RF + Extra Trees ensemble",
+        "same_unseen_folds": 5,
+        "candidate_fold_wins": 4,
+        "current_model_fold_wins": 1,
+        "ties": 0,
+        "paired_observations": 474,
+        "mean_accuracy_difference_candidate_minus_current": 0.014767932489451477,
+        "moving_block_bootstrap_95pct_ci": {
+          "lower": -0.008438818565400843,
+          "upper": 0.0379746835443038,
+          "block_length": 8,
+          "resamples": 1000
+        },
+        "verdict": "NO_CLEAR_WINNER"
+      },
+      {
+        "candidate": "HistGradientBoosting",
+        "current_model": "RF + Extra Trees ensemble",
+        "same_unseen_folds": 5,
+        "candidate_fold_wins": 2,
+        "current_model_fold_wins": 2,
+        "ties": 1,
+        "paired_observations": 474,
+        "mean_accuracy_difference_candidate_minus_current": 0.002109704641350211,
+        "moving_block_bootstrap_95pct_ci": {
+          "lower": -0.04852320675105485,
+          "upper": 0.04852320675105485,
+          "block_length": 8,
+          "resamples": 1000
+        },
+        "verdict": "NO_CLEAR_WINNER"
+      },
+      {
+        "candidate": "Logistic Regression",
+        "current_model": "RF + Extra Trees ensemble",
+        "same_unseen_folds": 5,
+        "candidate_fold_wins": 5,
+        "current_model_fold_wins": 0,
+        "ties": 0,
+        "paired_observations": 474,
+        "mean_accuracy_difference_candidate_minus_current": 0.07172995780590717,
+        "moving_block_bootstrap_95pct_ci": {
+          "lower": 0.027426160337552744,
+          "upper": 0.1160337552742616,
+          "block_length": 8,
+          "resamples": 1000
+        },
+        "verdict": "CANDIDATE_PROMISING_NOT_PROVEN"
+      }
+    ],
+    "mean_accuracy": 0.4578051511758119,
+    "std_accuracy": 0.045580724597441745,
+    "mean_balanced_accuracy": 0.44136366895804285,
+    "mean_baseline_accuracy": 0.5316909294512878,
+    "observations": 474,
+    "method": "pre-holdout expanding-window walk-forward; no shuffle; one-row label-boundary purge; identical chronological test rows for every candidate; paired moving-block bootstrap for each candidate versus ensemble; majority-class baseline trained per fold",
+    "target_definition": "next-session close direction (Close[t+1] > Close[t]); final row without a future close is excluded",
+    "evaluation_audit": {
+      "status": "passed",
+      "target_values": [
+        0,
+        1
+      ],
+      "target_definition": "binary next-session direction; target=1 iff next close is greater than current close",
+      "feature_count": 8,
+      "leakage_name_scan": "passed; no feature names contain target/label/future/forward/next_close/lead_ tokens",
+      "folds_use_same_test_rows": true,
+      "training_window_expands": true,
+      "label_boundary_purge_rows": 1,
+      "majority_baseline_fit_on_training_rows_only": true,
+      "caveat": "Name scanning cannot prove absence of semantic leakage; feature construction must also be reviewed."
+    },
+    "metric_guidance": {
+      "accuracy": "fraction of correctly classified observations; compare with the fold-trained majority baseline",
+      "balanced_accuracy": "mean recall across classes; null for a single-class test fold",
+      "precision_up": "precision for predicted UP class; not a measure of profitability",
+      "brier_score": "mean squared error of UP probabilities; lower is better",
+      "log_loss": "probability scoring loss; lower is better",
+      "probability_metrics_note": "Scores are uncalibrated model probabilities and must not be interpreted as investment success probabilities"
+    },
+    "evaluation_scope": "pre-holdout model-selection data only",
+    "final_holdout_note": "The final 20% holdout is excluded from walk-forward model selection. Because this holdout was reported in earlier project versions, it is not a fresh untouched confirmatory set; use future observations for independent confirmation."
+  },
+  "test_accuracy": 0.5084033613445378,
+  "balanced_accuracy": 0.5086864406779661,
+  "majority_baseline_accuracy": 0.4957983193277311,
+  "test_observations": 238,
+  "holdout_model_comparison": {
+    "test_period": "final chronological 20% holdout",
+    "test_observations": 238,
+    "current_model": "RF + Extra Trees ensemble",
+    "current_model_accuracy": 0.5084033613445378,
+    "random_forest_accuracy": 0.5336134453781513,
+    "majority_baseline_accuracy": 0.4957983193277311,
+    "random_forest_minus_current": 0.025210084033613467,
+    "winner": "RANDOM_FOREST_ON_THIS_HOLDOUT",
+    "independence_status": "previously_inspected_not_fresh_confirmatory_holdout",
+    "warning": "This holdout was reported in earlier project versions, so treat it as diagnostic rather than fresh independent confirmation. Validate final choices on future observations."
+  },
+  "up_probability": 0.6588085177464049,
+  "explanation": "The versioned ensemble is loaded from a persisted artifact when its symbol, feature schema, and labelled-data fingerprint match; otherwise it is retrained and atomically saved. Price-level indicators are normalized into relative gaps/ratios, and five-session momentum is included. The model comparison evaluates several model families on chronological walk-forward folds. It does not learn from a prediction outcome until that outcome is observable in later market data. Accuracy near the majority-class baseline is weak evidence; no accuracy level is guaranteed. An 80â90% directional hit rate has not been demonstrated and cannot be promised. This is experimental research, not investment advice.",
+  "news_sentiment": {
+    "status": "ok",
+    "provider": "Yahoo Finance news",
+    "symbol": "^NSEI",
+    "fetched_at": "2026-11-20T06:43:29.566936+00:00",
+    "article_count": 10,
+    "aggregate_sentiment_score": 0.058,
+    "aggregate_sentiment": "Positive",
+    "articles": [
+      {
+        "title": "Asiaâs non-AI market beneficiaries: Watch these markets as tech valuations sink",
+        "source": "Investing.com",
+        "url": "https://finance.yahoo.com/markets/world-indices/articles/asia-non-ai-market-beneficiaries-065020985.html",
+        "published_at": "2026-11-19T06:50:20+00:00",
+        "sentiment_score": 0.4215,
+        "sentiment": "Positive"
+      },
+      {
+        "title": "The Test for Indiaâs $8.9 Billion Foreign Rally Arrives in December",
+        "source": "BeInCrypto",
+        "url": "https://beincrypto.com/india-inflation-tests-nifty-50-rally/",
+        "published_at": "2026-11-16T13:16:06+00:00",
+        "sentiment_score": 0.0,
+        "sentiment": "Neutral"
+      },
+      {
+        "title": "India Overtakes Taiwan to Become Worldâs 5th Largest Stock Market Again",
+        "source": "BeInCrypto",
+        "url": "https://beincrypto.com/india-overtakes-taiwan-fifth-largest-stock-market/",
+        "published_at": "2026-11-12T10:14:58+00:00",
+        "sentiment_score": 0.0,
+        "sentiment": "Neutral"
+      },
+      {
+        "title": "Nifty 50 Is Still Down 4.91% in 2026, So Why Does Citi See 13% Upside?",
+        "source": "BeInCrypto",
+        "url": "https://beincrypto.com/citi-nifty-50-target-2027/",
+        "published_at": "2026-11-09T07:32:34+00:00",
+        "sentiment_score": 0.4019,
+        "sentiment": "Positive"
+      },
+      {
+        "title": "AI stock selloff drives investors to China, India, and overlooked Asian sectors",
+        "source": "Investing.com",
+        "url": "https://finance.yahoo.com/markets/stocks/articles/ai-stock-selloff-drives-investors-013045557.html",
+        "published_at": "2026-11-08T01:30:45+00:00",
+        "sentiment_score": -0.0258,
+        "sentiment": "Neutral"
+      },
+      {
+        "title": "Why Indiaâs Nifty 50 Is Holding Steady Despite Asian Market Selloff",
+        "source": "BeInCrypto",
+        "url": "https://beincrypto.com/nifty-50-holds-steady-asian-selloff/",
+        "published_at": "2026-11-04T06:43:59+00:00",
+        "sentiment_score": 0.4019,
+        "sentiment": "Positive"
+      },
+      {
+        "title": "India stocks dip after RBI hikes rates for first time in nearly 4 yrs",
+        "source": "Investing.com",
+        "url": "https://finance.yahoo.com/economy/policy/articles/india-stocks-dip-rbi-hikes-061508837.html",
+        "published_at": "2026-10-07T06:15:08+00:00",
+        "sentiment_score": 0.0,
+        "sentiment": "Neutral"
+      },
+      {
+        "title": "Indian AI Stocks To Watch In September 2026",
+        "source": "Simply Wall St.",
+        "url": "https://finance.yahoo.com/technology/ai/articles/indian-ai-stocks-watch-september-090902535.html",
+        "published_at": "2026-09-28T09:09:02+00:00",
+        "sentiment_score": 0.0,
+        "sentiment": "Neutral"
+      },
+      {
+        "title": "Global funds retreat from Indian stocks as some cut exposure to zero - Bloomberg",
+        "source": "Investing.com",
+        "url": "https://finance.yahoo.com/markets/stocks/articles/global-funds-retreat-indian-stocks-054744514.html",
+        "published_at": "2026-09-12T05:47:44+00:00",
+        "sentiment_score": -0.0772,
+        "sentiment": "Negative"
+      },
+      {
+        "title": "India's HDFC Bank slips to 2-1/2-year low as legal, leadership woes linger",
+        "source": "Reuters",
+        "url": "https://sg.finance.yahoo.com/news/indias-hdfc-bank-slips-2-091645918.html",
+        "published_at": "2026-08-27T10:44:12+00:00",
+        "sentiment_score": -0.5423,
+        "sentiment": "Negative"
+      }
+    ],
+    "used_by_prediction_model": false,
+    "note": "Fetched for this request. News sentiment is displayed separately and does not alter model probabilities until point-in-time news training and out-of-sample validation are available."
+  },
+  "history_saved": true,
+  "prospective_saved": true,
+  "prospective_status": "already_recorded",
+  "disclaimer": "Experimental analysis only; not investment advice."
+}

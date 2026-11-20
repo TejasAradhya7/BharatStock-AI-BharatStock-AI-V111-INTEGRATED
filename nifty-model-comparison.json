@@ -1,0 +1,56 @@
+﻿[
+    {
+        "model":  "Majority-class baseline",
+        "mean_accuracy":  0.5316909294512878,
+        "mean_balanced_accuracy":  0.5,
+        "mean_precision_up":  0.5316909294512878,
+        "mean_brier_score":  null,
+        "mean_log_loss":  null,
+        "folds_evaluated":  5
+    },
+    {
+        "model":  "Logistic Regression",
+        "mean_accuracy":  0.5296304591265397,
+        "mean_balanced_accuracy":  0.4900051907973868,
+        "mean_precision_up":  0.4771058150035971,
+        "mean_brier_score":  0.2518470525200027,
+        "mean_log_loss":  0.696905021274298,
+        "folds_evaluated":  5
+    },
+    {
+        "model":  "Extra Trees",
+        "mean_accuracy":  0.4726091825307951,
+        "mean_balanced_accuracy":  0.44963617343835127,
+        "mean_precision_up":  0.4926516706677392,
+        "mean_brier_score":  0.2563008858185404,
+        "mean_log_loss":  0.7058858375838004,
+        "folds_evaluated":  5
+    },
+    {
+        "model":  "Random Forest",
+        "mean_accuracy":  0.4641433370660694,
+        "mean_balanced_accuracy":  0.4560274076054475,
+        "mean_precision_up":  0.4958958001063264,
+        "mean_brier_score":  0.2700113665630126,
+        "mean_log_loss":  0.7355104378491024,
+        "folds_evaluated":  5
+    },
+    {
+        "model":  "HistGradientBoosting",
+        "mean_accuracy":  0.45997760358342665,
+        "mean_balanced_accuracy":  0.4613590771322169,
+        "mean_precision_up":  0.4934439384375585,
+        "mean_brier_score":  0.3176114161548698,
+        "mean_log_loss":  0.8595352357540346,
+        "folds_evaluated":  5
+    },
+    {
+        "model":  "RF + Extra Trees ensemble",
+        "mean_accuracy":  0.4578051511758119,
+        "mean_balanced_accuracy":  0.44136366895804285,
+        "mean_precision_up":  0.48546526151795455,
+        "mean_brier_score":  0.2615150604355997,
+        "mean_log_loss":  0.7167919192131975,
+        "folds_evaluated":  5
+    }
+]
