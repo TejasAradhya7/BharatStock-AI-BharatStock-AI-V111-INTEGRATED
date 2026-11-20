@@ -964,6 +964,7 @@ def intraday_research(symbol: str, instrument_key: str = Query(..., min_length=5
                       db: Session = Depends(get_db)):
     """Fetch real Upstox intraday candles and run chronological model comparisons."""
     try:
+        instrument_key = instrument_key.strip()
         normalized_interval = int(interval)
         if normalized_interval not in {1, 2, 3, 5, 10, 15, 30}:
             raise ValueError("Interval must be 1, 2, 3, 5, 10, 15 or 30 minutes.")
