@@ -10,6 +10,8 @@
 [![Upstox API V3](https://img.shields.io/badge/Upstox-Market_Data_Feed_V3-purple.svg)](https://upstox.com/developer/api-documentation/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ed.svg?logo=docker)](https://www.docker.com/)
 [![YUKTI Innovation ID](https://img.shields.io/badge/YUKTI_Innovation_ID-IR2026--1060396-brightgreen.svg)](#-project-exhibition--academic-credentials)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-success.svg?logo=vercel)](https://bharat-stock-ai-bharat-stock-ai-v11.vercel.app/)
+[![Tunnel Link](https://img.shields.io/badge/Named_Tunnel-bharatstock--ai.loca.lt-blue.svg)](https://bharatstock-ai.loca.lt)
 
 <br/>
 
@@ -37,6 +39,14 @@
   * **VISHWAS B**
 * **Project Guide:** **Prof. Nazia Nusrath Ul Ain**, Department of ECE, Sai Vidya Institute of Technology  
 * **Poster Presentation Artifact:** [`docs/BharatStock_AI_Poster_TechSpardha_2K26.pptx`](docs/BharatStock_AI_Poster_TechSpardha_2K26.pptx)
+
+---
+
+## 🌐 Live Project Demonstration Links
+
+* **Live Cloud Dashboard (Vercel):** [https://bharat-stock-ai-bharat-stock-ai-v11.vercel.app/](https://bharat-stock-ai-bharat-stock-ai-v11.vercel.app/)
+* **Direct Named Live Tunnel:** [https://bharatstock-ai.loca.lt](https://bharatstock-ai.loca.lt) *(Tunnel Verification IP: `49.207.149.167`)*
+* **Local Workspace (Docker Compose):** `http://localhost:8081` | Interactive API Docs: `http://localhost:8000/docs`
 
 ---
 
